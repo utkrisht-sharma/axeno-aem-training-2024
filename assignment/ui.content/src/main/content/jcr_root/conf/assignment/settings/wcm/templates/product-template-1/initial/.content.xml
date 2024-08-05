@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:lastModified="{Date}2024-08-05T15:56:00.337+05:30"
+        cq:lastModifiedBy="admin"
+        cq:template="/conf/product/settings/wcm/templates/product-template-1"
+        jcr:primaryType="cq:PageContent"
+        sling:resourceType="assignment/components/page">
+        <root
+            jcr:lastModified="{Date}2024-08-04T22:01:32.906+05:30"
+            jcr:lastModifiedBy="admin"
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="wcm/foundation/components/responsivegrid">
+            <image_1456110120
+                jcr:created="{Date}2024-08-05T14:27:53.025+05:30"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2024-08-05T14:27:53.025+05:30"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="assignment/components/image"/>
+            <product
+                jcr:created="{Date}2024-08-05T10:42:25.647+05:30"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2024-08-05T10:42:25.647+05:30"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="assignment/components/product"/>
+            <product_details
+                jcr:created="{Date}2024-08-05T14:29:33.019+05:30"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2024-08-05T15:56:00.333+05:30"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="assignment/components/product-details">
+                <productDetails jcr:primaryType="nt:unstructured">
+                    <item0
+                        jcr:primaryType="nt:unstructured"
+                        color="hj"
+                        features="h"
+                        price="5"
+                        variantName="hjkjhhkj"/>
+                </productDetails>
+            </product_details>
+        </root>
+    </jcr:content>
+</jcr:root>
