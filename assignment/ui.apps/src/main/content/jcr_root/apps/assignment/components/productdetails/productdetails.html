@@ -1,0 +1,27 @@
+<div>
+<h1> Product Details </h1> 
+<table style="border: 1px solid black; border-collapse: collapse; width: 100%;">
+<thead>
+<tr>
+<th style="border: 1px solid black;" >variant</th>
+<th style="border: 1px solid black;">price</th>
+<th style="border: 1px solid black;">color</th>
+<th style="border: 1px solid black;">features</th>
+</tr>
+</thead>
+<tbody>
+<sly data-sly-list="${resource.listChildren}">
+<sly data-sly-test="${item.name == 'productDetails'}">
+<sly data-sly-list.details="${items.listChildren}">
+<tr>
+<td style="border: 1px solid black;">${details.variantName}</td>
+<td style="border: 1px solid black;">${details.price}</td>
+<td style="border: 1px solid black;">${details.color}</td>
+<td style="border: 1px solid black;">${details.features}</td>
+</tr>
+</sly>
+</sly>
+</sly>
+</tbody>
+</table>
+</div>

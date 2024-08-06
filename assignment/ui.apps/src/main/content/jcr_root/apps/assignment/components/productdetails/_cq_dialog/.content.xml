@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="cq/gui/components/authoring/dialog">
+    <content
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/container">
+        <items jcr:primaryType="nt:unstructured">
+            <variants
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                composite="true"
+                fieldLabel="Variants"
+                maximized="true"
+                name="./variants">
+                <field
+                    jcr:primaryType="nt:unstructured"
+                    jcr:title="Variant"
+                    sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
+                    name="./productDetails">
+                    <items jcr:primaryType="nt:unstructured">
+                        <variantName
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType=" granite/ui/components/coral/foundation/form/textfield"
+                            fieldLabel=" Variant Name"
+                            name="./variantName"/>
+                        <price
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType=" granite/ui/components/coral/foundation/form/textfield"
+                            fieldLabel="Price"
+                            name="./price"/>
+                        <colors
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType=" granite/ui/components/coral/foundation/form/textfield"
+                            fieldLabel="colors"
+                            name="./colors"/>
+                        <features
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType=" granite/ui/components/coral/foundation/form/multifield&#xa;"
+                            fieldLabel="features"
+                            name="./features"
+                            typeHint="actions@String[]">
+                            <field
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./features"/>
+                        </features>
+                    </items>
+                </field>
+            </variants>
+        </items>
+    </content>
+</jcr:root>
