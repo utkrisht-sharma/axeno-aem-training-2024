@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
     jcr:primaryType="cq:Page">
     <jcr:content
+        cq:lastModified="{Date}2024-08-06T03:53:08.751+05:30"
+        cq:lastModifiedBy="admin"
         cq:template="/conf/assignment/settings/wcm/templates/page-content"
         jcr:primaryType="cq:PageContent"
         sling:resourceType="assignment/components/page">
@@ -17,9 +19,56 @@
                     jcr:primaryType="nt:unstructured"
                     sling:resourceType="assignment/components/title"/>
                 <container
+                    jcr:lastModified="{Date}2024-08-06T03:52:57.651+05:30"
+                    jcr:lastModifiedBy="admin"
                     jcr:primaryType="nt:unstructured"
                     sling:resourceType="assignment/components/container"
-                    layout="responsiveGrid"/>
+                    accessibilityLabel="my name"
+                    id="45"
+                    layout="responsiveGrid">
+                    <pagecomponent
+                        jcr:created="{Date}2024-08-06T03:45:34.178+05:30"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2024-08-06T03:45:34.178+05:30"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="assignment/components/pagecomponent"/>
+                    <productdetailsmultif
+                        jcr:created="{Date}2024-08-06T03:46:53.665+05:30"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2024-08-06T03:46:53.665+05:30"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="assignment/components/productdetailsmultifield"/>
+                    <pagecomponent_321430980
+                        jcr:created="{Date}2024-08-06T03:46:10.700+05:30"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2024-08-06T03:46:10.700+05:30"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="assignment/components/pagecomponent"/>
+                    <pagecomponent_1729364910
+                        jcr:created="{Date}2024-08-06T03:50:04.973+05:30"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2024-08-06T03:50:04.973+05:30"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="assignment/components/pagecomponent"/>
+                    <productdetailsmultif_1243977193
+                        jcr:created="{Date}2024-08-06T03:50:09.791+05:30"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2024-08-06T03:50:09.791+05:30"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="assignment/components/productdetailsmultifield"/>
+                    <productdetailsmultif_1403470936
+                        jcr:created="{Date}2024-08-06T03:53:08.746+05:30"
+                        jcr:createdBy="admin"
+                        jcr:lastModified="{Date}2024-08-06T03:53:08.746+05:30"
+                        jcr:lastModifiedBy="admin"
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="assignment/components/productdetailsmultifield"/>
+                </container>
             </container>
         </root>
     </jcr:content>
