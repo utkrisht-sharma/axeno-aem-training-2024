@@ -88,6 +88,34 @@ module.exports = {
           ignore: ['**/*.js', '**/*.css']
         }
       }
+    },
+  {
+    ...libsBaseConfig,
+    name: 'clientlib-custom',
+    categories: ['assignment.custom'],
+    dependencies: ['assignment.dependencies'],
+    assets: {
+      // Copy entrypoint scripts and stylesheets into the respective ClientLib
+      // directories
+      js: {
+        cwd: 'clientlib-custom',
+        files: ['**/*.js'],
+        flatten: false
+      },
+      css: {
+        cwd: 'clientlib-custom',
+        files: ['**/*.css'],
+        flatten: false
+      },
+
+      // Copy all other files into the `resources` ClientLib directory
+      resources: {
+        cwd: 'clientlib-custom',
+        files: ['**/*.*'],
+        flatten: false,
+        ignore: ['**/*.js', '**/*.css']
+      }
     }
+  }
   ]
 };

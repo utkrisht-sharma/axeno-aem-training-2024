@@ -19,12 +19,25 @@ const resolve = {
 module.exports = {
     resolve: resolve,
     entry: {
-        site: SOURCE_ROOT + '/site/main.ts'
+        site: SOURCE_ROOT + '/site/main.ts',
+        custom : SOURCE_ROOT + '/custom/main.ts'
     },
     output: {
-        filename: (chunkData) => {
-            return chunkData.chunk.name === 'dependencies' ? 'clientlib-dependencies/[name].js' : 'clientlib-site/[name].js';
-        },
+    filename : ()=>{
+          return "clientlib-[name]/[name].js";
+       },
+//        filename: (chunkData) => {
+//            return chunkData.chunk.name === 'dependencies' ? 'clientlib-dependencies/[name].js' : 'clientlib-site/[name].js';
+//        },
+//        filename: (chunkData) => {
+//                if (chunkData.chunk.name === 'dependencies') {
+//                    return 'clientlibs-dependencies/[name].js';
+//                } else if (chunkData.chunk.name === 'site') {
+//                    return 'clientlibs-site/[name].js';
+//                } else {
+//                    return 'custom-clientlibs/[name].js';
+//                }
+//            },
         path: path.resolve(__dirname, 'dist')
     },
     module: {
