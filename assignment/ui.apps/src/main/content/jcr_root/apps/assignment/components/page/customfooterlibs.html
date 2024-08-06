@@ -13,7 +13,16 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */-->
-<sly data-sly-use.clientlib="core/wcm/components/commons/v1/templates/clientlib.html">
-    <sly data-sly-call="${clientlib.js @ categories='assignment.base', async=true}"/>
-</sly>
+<!DOCTYPE html>
+<html xmlns:cq="">
+<head>
+    <title>My Page</title>
+    <cq:includeClientLib categories="clientlib-custom"/>
+</head>
+<body>
+<h1>Welcome to My Page</h1>
+<!-- Your content here -->
+</body>
+</html>
+
 
