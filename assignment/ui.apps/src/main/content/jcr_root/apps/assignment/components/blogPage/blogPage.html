@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html">
+    <head>
+        <title>${currentPage.title}</title>
+        <sly data-sly-call="${clientlib.css @ categories='clientlib-blog'}"/>
+    </head>
+    <body>
+        <header>
+            <h1>Welcome to ${currentPage.title}</h1>
+        </header>
+      
+        <footer>
+            <p>&copy; 2024 My Company. All rights reserved.</p>
+            <p><a href="#">Contact Us</a></p>
+            <sly data-sly-call="${clientlib.js @ categories='clientlib-blog'}"/>
+        </footer>
+    </body>
+</html>

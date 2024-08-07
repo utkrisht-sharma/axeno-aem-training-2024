@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:lastModified="{Date}2024-08-07T18:22:26.151+05:30"
+        cq:lastModifiedBy="admin"
+        cq:template="/conf/assignment/settings/wcm/templates/blog-page-template"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="myblog1"
+        sling:resourceType="assignment/components/blogPage"
+        authorName="Subha"
+        designation="intern"/>
+</jcr:root>
