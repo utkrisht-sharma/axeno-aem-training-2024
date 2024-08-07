@@ -19,7 +19,8 @@ const resolve = {
 module.exports = {
     resolve: resolve,
     entry: {
-        site: SOURCE_ROOT + '/site/main.ts'
+        site: SOURCE_ROOT + '/site/main.ts',
+        uditupmanyu: SOURCE_ROOT + '/uditupmanyu/main.ts'
     },
     output: {
         filename: (chunkData) => {
