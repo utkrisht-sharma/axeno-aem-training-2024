@@ -1,14 +1,15 @@
 package com.assignment.core.services.impl;
 
-import com.assignment.core.services.CryptoException;
 import com.assignment.core.services.config.CryptoConfiguration;
 import com.assignment.core.services.CryptoService;
+import com.assignment.core.services.exceptions.EncryptException;
+import com.assignment.core.services.exceptions.DecryptException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.metatype.annotations.Designate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
@@ -23,7 +24,7 @@ import java.util.Base64;
 @Designate(ocd = CryptoConfiguration.class)
 public class AsymmetricCryptoServiceImpl implements CryptoService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AsymmetricCryptoServiceImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger(AsymmetricCryptoServiceImpl.class);
 
     private PublicKey encryptionKey;
     private PrivateKey decryptionKey;
@@ -49,22 +50,20 @@ public class AsymmetricCryptoServiceImpl implements CryptoService {
         }
     }
 
-
-
     @Override
-    public String encryptMessage(String plaintext) throws CryptoException {
+    public String encryptMessage(String plaintext) throws EncryptException {
         try {
             Cipher cipher = Cipher.getInstance(algorithm + "/ECB/PKCS1Padding");
             cipher.init(Cipher.ENCRYPT_MODE, encryptionKey);
             byte[] encryptedBytes = cipher.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(encryptedBytes);
         } catch (Exception e) {
-            throw new CryptoException("Failed to encrypt message", e);
+            throw new EncryptException("Failed to encrypt message", e);
         }
     }
 
     @Override
-    public String decryptMessage(String ciphertext) throws CryptoException {
+    public String decryptMessage(String ciphertext) throws DecryptException {
         try {
             byte[] encryptedBytes = Base64.getDecoder().decode(ciphertext);
             Cipher cipher = Cipher.getInstance(algorithm + "/ECB/PKCS1Padding");
@@ -72,7 +71,7 @@ public class AsymmetricCryptoServiceImpl implements CryptoService {
             byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
             return new String(decryptedBytes, StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new CryptoException("Failed to decrypt message", e);
+            throw new DecryptException("Failed to decrypt message", e);
         }
     }
 }
