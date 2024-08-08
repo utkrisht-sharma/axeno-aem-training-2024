@@ -1,4 +1,4 @@
-package com.assignment.core.services;
+package com.assignment.core.services.exceptions;
 
 public class CipherException extends Exception {
     public CipherException(String message) {
@@ -9,3 +9,4 @@ public class CipherException extends Exception {
         super(message, cause);
     }
 }
+
