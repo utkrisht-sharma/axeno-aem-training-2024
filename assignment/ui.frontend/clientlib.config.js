@@ -71,12 +71,12 @@ module.exports = {
             // directories
             js: {
               cwd: 'clientlib-uditupmanyu',
-              files: ['src/main/webpack/uditupmanyu/styles/**/*.js'],
+              files: ['src/main/webpack/uditupmanyu/**/*.js'],
               flatten: false
             },
             css: {
               cwd: 'clientlib-uditupmanyu',
-              files: ['src/main/webpack/uditupmanyu/styles/**/*.css'],
+              files: ['src/main/webpack/uditupmanyu/**/*.css'],
               flatten: false
             }
             resources: {
@@ -86,7 +86,7 @@ module.exports = {
                   ignore: ['**/*.js', '**/*.css']
                 }
           }
-        }
+        },
     {
       ...libsBaseConfig,
       name: 'clientlib-site',

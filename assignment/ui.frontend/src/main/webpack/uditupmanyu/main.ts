@@ -1,5 +1,5 @@
 
-// Stylesheets
+StyleSheet
 import "./main.scss";
 
 // Javascript or Typescript

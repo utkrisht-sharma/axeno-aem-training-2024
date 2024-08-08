@@ -1,0 +1,11 @@
+<div class="blogpage">
+<sly data-sly-include="customheaderlibs.html"></sly>
+    <h1>${pageProperties['jcr:title']}</h1>
+    <p>Author: ${pageProperties['authorName']}</p>
+    <p>Designation: ${pageProperties['authorDesignation']}</p>
+    <p>Publish Date: ${pageProperties['blogPublishDate'] @ format='yyyy-MM-dd'}</p>
+    <div class="blog-content">
+        <sly data-sly-include="${resource.path @ resourceType='wcm/foundation/components/responsivegrid'}" />
+        <sly data-sly-include="customfooterlibs.html"></sly>
+    </div>
+</div>

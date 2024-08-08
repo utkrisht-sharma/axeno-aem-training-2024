@@ -1,0 +1,17 @@
+<div class="blog-listing">
+<sly data-sly-include="customheaderlibs.html"></sly>
+    <ul>
+        <sly data-sly-resource="${resource.path @ resourceType='assignment/components/blog-listing'}" />
+        <sly data-sly-list.blog="${currentPage.listChildren}">
+            <li>
+           
+                <h2>${blog.properties['jcr:title']}</h2>
+                <p>${blog.properties['authorDesignation'] @ context='text' }</p>
+                <p>${blog.properties['blogPublishDate']}</p>
+                <p>${blog.properties['authorName'] @ context='text'}</p>
+       
+            </li>
+        </sly>
+        <sly data-sly-include="customhfooterlibs.html"></sly>
+    </ul>
+</div>
