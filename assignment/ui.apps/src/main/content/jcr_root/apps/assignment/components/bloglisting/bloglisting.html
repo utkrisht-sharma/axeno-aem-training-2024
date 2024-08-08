@@ -1,0 +1,14 @@
+<div class="blog-listing">
+    <ul>
+        <sly data-sly-list.childPage="${currentPage.listChildren}">
+            <li>
+                <h2>${childPage.title}</h2>
+                <p>Name : ${childPage.properties.authorName}</p>
+                <p>Designation : ${childPage.properties.authorDesignation ? childPage.properties.authorDesignation : 'No Author Designation'}</p>
+                <p>Publish Date: ${'yyyy-MM-dd' @ format=childPage.properties.blogPublishDate}</p>
+               
+            </li>
+        </sly>
+    </ul>
+</div>
+
