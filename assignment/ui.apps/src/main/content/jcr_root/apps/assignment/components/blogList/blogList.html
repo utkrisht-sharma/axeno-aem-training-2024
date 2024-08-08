@@ -1,0 +1,5 @@
+<ul data-sly-list.child="${currentPage.listChildren}">
+<li>${child.properties.authorname}</li>
+<li>${child.properties.authordesignation}</li>
+<li>Publish Date: ${'yyyy-MM-dd' @ format=child.properties.publishdate}</li>
+</ul>
