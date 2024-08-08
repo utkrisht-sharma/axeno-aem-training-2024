@@ -1,0 +1,63 @@
+/* bloglisting.css */
+
+/* General styles for the blog listing page */
+.blog-listing {
+    font-family: Arial, sans-serif;
+    color: #333;
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+/* Blog listing styles */
+.blog-listing ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.blog-listing li {
+    background-color: #ecf0f1;
+    margin: 10px 0;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s;
+}
+
+.blog-listing li:hover {
+    background-color: #bdc3c7;
+}
+
+.blog-listing h2 {
+    font-size: 1.5em;
+    margin: 0 0 10px;
+    color: #2c3e50;
+}
+
+.blog-listing p {
+    margin: 5px 0;
+    font-size: 1.1em;
+    color: #7f8c8d;
+}
+
+.blog-listing p.authorDesignation,
+.blog-listing p.blogPublishDate,
+.blog-listing p.authorName {
+    font-weight: bold;
+}
+
+/* Responsive design adjustments */
+@media (max-width: 600px) {
+    .blog-listing {
+        padding: 10px;
+    }
+    
+    .blog-listing h2 {
+        font-size: 1.2em;
+    }
+    
+    .blog-listing p {
+        font-size: 1em;
+    }
+}

@@ -1,0 +1,40 @@
+/* blogpage.css */
+
+/* General styles for the blog page */
+.blogpage {
+    font-family: Arial, sans-serif;
+    color: #333;
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+/* Header styles */
+.blogpage h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+/* Author and publish information styles */
+.blogpage p {
+    margin: 5px 0;
+    font-size: 1.1em;
+    color: #7f8c8d;
+}
+
+.blogpage p.authorName,
+.blogpage p.authorDesignation,
+.blogpage p.blogPublishDate {
+    font-weight: bold;
+}
+
+/* Blog content styles */
+.blogpage .blog-content {
+    margin-top: 20px;
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

@@ -61,6 +61,32 @@ module.exports = {
         }
       }
     },
+       {
+          ...libsBaseConfig,
+          name: 'clientlib-uditupmanyu',
+          categories: ['assignment.uditupmanyu'],
+          dependencies:['assignment.dependencies']
+          assets: {
+            // Copy entrypoint scripts and stylesheets into the respective ClientLib
+            // directories
+            js: {
+              cwd: 'clientlib-uditupmanyu',
+              files: ['src/main/webpack/uditupmanyu/**/*.js'],
+              flatten: false
+            },
+            css: {
+              cwd: 'clientlib-uditupmanyu',
+              files: ['src/main/webpack/uditupmanyu/**/*.css'],
+              flatten: false
+            }
+            resources: {
+                  cwd: 'clientlib-uditupmanyu',
+                  files: ['**/*.*'],
+                  flatten: false,
+                  ignore: ['**/*.js', '**/*.css']
+                }
+          }
+        },
     {
       ...libsBaseConfig,
       name: 'clientlib-site',
