@@ -81,6 +81,9 @@ Import-Package: javax.annotation;version=0.0.0,*
     </build>
 
     <dependencies>
+
+
+
         <dependency>
             <groupId>uk.org.lidalia</groupId>
             <artifactId>slf4j-test</artifactId>
