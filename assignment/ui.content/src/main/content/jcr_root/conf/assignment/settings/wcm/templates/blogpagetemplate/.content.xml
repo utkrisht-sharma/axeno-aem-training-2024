@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0"
+    jcr:primaryType="cq:Template">
+    <jcr:content
+        cq:lastModified="{Date}2024-08-05T18:45:11.818+05:30"
+        cq:lastModifiedBy="admin"
+        cq:templateType="/conf/assignment/settings/wcm/template-types/blogpagetemplate"
+        jcr:description="My Blog Page Template"
+        jcr:primaryType="cq:PageContent"
+        jcr:title="My New Blog Page"
+        status="enabled"/>
+</jcr:root>

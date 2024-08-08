@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+    jcr:primaryType="nt:unstructured">
+    <content
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/container">
+        <items jcr:primaryType="nt:unstructured">
+            <tabs
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/tabs">
+                <items jcr:primaryType="nt:unstructured">
+                    <authordetails
+                        jcr:primaryType="nt:unstructured"
+                        jcr:title="Author Details"
+                        sling:orderBefore="thumbnail"
+                        sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">
+                        <items jcr:primaryType="nt:unstructured">
+                            <column
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/container">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <authorname
+                                        jcr:primaryType="nt:unstructured"
+                                        jcr:title="Name Of Author"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        fieldDescription="Here Comes The Author Name"
+                                        fieldLabel="Name Of Author"
+                                        name="./nameofauthor"/>
+                                    <authordesignation
+                                        jcr:primaryType="nt:unstructured"
+                                        jcr:title="Designation of author"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        fieldDescription="Designation Of Author"
+                                        fieldLabel="Designation Of Author"
+                                        name="./designationofauthor"/>
+                                    <publishdate
+                                        jcr:primaryType="nt:unstructured"
+                                        jcr:title="publish date"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/datepicker"
+                                        fieldDescription="Publish Date"
+                                        fieldLabel="Publish Date"
+                                        fieldLevel="publishdate"
+                                        name="./publishdate"/>
+                                </items>
+                            </column>
+                        </items>
+                    </authordetails>
+                </items>
+            </tabs>
+        </items>
+    </content>
+</jcr:root>
