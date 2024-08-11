@@ -1,0 +1,12 @@
+<sly data-sly-use.model="com.assignment.core.models.BreadCrumbModel">
+
+
+    <sly data-sly-list.items="${model.parents}">
+        <sly data-sly-test="${items != model.parents[0]}">
+            <span> / </span>
+        </sly>
+        ${items}
+    </sly>
+
+
+</sly>
