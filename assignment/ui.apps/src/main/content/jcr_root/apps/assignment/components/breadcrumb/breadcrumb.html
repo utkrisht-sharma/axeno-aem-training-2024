@@ -1,0 +1,22 @@
+<sly data-sly-use.model="${'com.assignment.core.models.BreadcrumbModel'}">
+    <sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html" ></sly>
+    <sly data-sly-call="${clientlib.css @ categories='clientlib-breadcrumb'}" ></sly>
+    <div class="breadcrumb">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <sly data-sly-list.item="${model.items}">
+                    <li class="breadcrumb-item ${item.active ? 'active' : ''}">
+                        <a href="${item.url}" data-sly-test="${!item.active}">${item.title}</a>
+                        <span data-sly-test="${item.active}">${item.title}</span>
+                        <sly data-sly-test="${!item.active}">
+                            <span class="breadcrumb-separator">/</span>
+                        </sly>
+                    </li>
+                </sly>
+            </ol>
+        </nav>
+    </div>
+</sly>
+
+
+
