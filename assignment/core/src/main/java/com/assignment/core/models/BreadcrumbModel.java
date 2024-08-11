@@ -18,15 +18,6 @@ public class BreadcrumbModel {
     @SlingObject
     private Resource resource;
 
-    @ValueMapValue
-    private Boolean showHidden;
-
-    @ValueMapValue
-    private Boolean hideCurrent;
-
-    @ValueMapValue
-    private Boolean disableShowing;
-
     private List<BreadcrumbItem> items;
 
     @PostConstruct
