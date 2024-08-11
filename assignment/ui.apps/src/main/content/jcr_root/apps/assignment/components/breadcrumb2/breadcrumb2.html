@@ -1,0 +1,10 @@
+<sly data-sly-use.breadcrumb="com.assignment.core.models.BreadcrumbModel">
+    <div class="breadcrumb" data-sly-list="${breadcrumb.breadcrumbs}">
+        <c:forEach items="${breadcrumb.breadcrumbs}" var="item" varStatus="status">
+            <a href="${item.path}.html">${item.title}</a>
+            <c:if test="${!status.last}">
+                <span> / </span>
+            </c:if>
+        </c:forEach>
+    </div>
+</sly>
