@@ -1,4 +1,4 @@
-package org.myproject.core.components;
+package com.assignment.core.models;
 
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
