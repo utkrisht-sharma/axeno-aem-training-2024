@@ -1,0 +1,43 @@
+<sly data-sly-include="customheaderlibs.html"></sly>
+
+<!-- Container for the home loan application form -->
+<div class="home-loan-form-container">
+    <h2>Home Loan Application</h2>
+
+    <!-- Form for submitting a home loan application -->
+    <form method="post" action="${'${sling.servletResourceType}' @ extension='json'}" id="home-loan-form">
+
+        <!-- Input field for client's name -->
+        <label for="clientName">Client Name:</label>
+        <input type="text" id="clientName" name="clientName" required>
+
+        <!-- Input field for client's monthly income -->
+        <!-- step is used to so that input is only upto 2 decimals -->
+        <label for="clientIncome">Monthly Income:</label>
+        <input type="number" step="0.01" id="clientIncome" name="clientIncome" required>
+
+        <!-- Input field for desired loan amount -->
+        <label for="loanAmount">Loan Amount:</label>
+        <input type="number" step="0.01" id="loanAmount" name="loanAmount" required>
+
+        <!-- Input field for loan term in months -->
+        <label for="loanTerm">Loan Term (Months):</label>
+        <input type="number" id="loanTerm" name="loanTerm" required>
+
+        <!-- Input field for existing EMIs -->
+        <label for="existingEMIs">Existing EMIs:</label>
+        <input type="number" step="0.01" id="existingEMIs" name="existingEMIs">
+
+        <!-- Input field for annual interest rate -->
+        <label for="interestRate">Annual Interest Rate (%):</label>
+        <input type="number" step="0.01" id="interestRate" name="interestRate" required>
+
+        <!-- Submit button for the form -->
+        <button type="submit">Submit Application</button>
+    </form>
+
+    <!-- Container to display the result of the loan application -->
+    <div id="loan-result"></div>
+</div>
+
+<sly data-sly-include="customfooterlibs.html"></sly>
