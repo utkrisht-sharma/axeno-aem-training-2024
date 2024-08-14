@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html" 
+	data-sly-call="${clientlib.all @ categories='assignment.homeloan'}"></sly>
+<head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Home Loan Application Form</title>
+</head>
+
+<body>
+    <h1>Home Loan Application Form</h1>
+
+    <form id="homeLoanForm" action="http://localhost:4502//content/assignment/homeloanpage/jcr:content/root/container/homeloaneligibilityf.json" method="post">
+        <div>
+            <label for="clientName">Client Name:</label>
+            <input type="text" id="clientName" name="clientName" required>
+        </div>
+
+        <div>
+            <label for="clientIncome">Client Monthly Income:</label>
+            <input type="number" id="clientIncome" name="clientIncome"   required>
+        </div>
+
+        <div>
+            <label for="loanAmount">Loan Amount:</label>
+            <input type="number" id="loanAmount" name="loanAmount"   required>
+        </div>
+
+        <div>
+            <label for="loanTerm">Loan Term (Months):</label>
+            <input type="number" id="loanTerm" name="loanTerm"  required>
+        </div>
+
+        <div>
+            <label for="existingEMIs">Existing EMIs:</label>
+            <input type="number" id="existingEMIs" name="existingEMIs"   required>
+        </div>
+
+        <div>
+            <label for="interestRate">Interest Rate (% per annum):</label>
+            <input type="number" id="interestRate" name="interestRate"  required>
+        </div>
+
+        <div>
+            <button type="submit">Check Eligibility</button>
+        </div>
+    </form>
+
+
+</body>
+
+</html>
