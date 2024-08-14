@@ -1,0 +1,89 @@
+
+<html>
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"
+
+     data-sly-call="${clientlib.css @ categories='assignment.emicalculator'}"></sly>
+
+
+<head>
+
+        <title>Home Loan Application Form</title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+<h1>Home Loan Application Form</h1>
+
+<form id="homeLoanForm" method="post" enctype="application/x-www-form-urlencoded">
+
+        <div>
+
+                <label for="clientName">Client Name:</label>
+
+                <input type="text" id="clientName" name="clientName" required>
+
+        </div>
+
+        <div>
+
+                <label for="clientIncome">Client Monthly Income:</label>
+
+                <input type="number" id="clientIncome" name="clientIncome" min="0" required>
+
+        </div>
+
+        <div>
+
+                <label for="loanAmount">Loan Amount:</label>
+
+                <input type="number" id="loanAmount" name="loanAmount" min="0" required>
+
+        </div>
+
+        <div>
+
+                <label for="loanTerm">Loan Term (Months):</label>
+
+                <input type="number" id="loanTerm" name="loanTerm" min="1" required>
+
+        </div>
+
+        <div>
+
+                <label for="existingEMIs">Existing EMIs:</label>
+
+                <input type="number" id="existingEMIs" name="existingEMIs" min="0" required>
+
+        </div>
+
+        <div>
+
+                <label for="interestRate">Interest Rate (% per annum):</label>
+
+                <input type="number" id="interestRate" name="interestRate" min="0" required>
+
+        </div>
+
+        <div>
+
+                <button type="submit">Submit</button>
+
+        </div>
+
+</form>
+
+
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"
+
+     data-sly-call="${clientlib.js @ categories='assignment.emicalculator'}"></sly>
+
+
+</body>
+
+</body>
+
+</html>
+
+ 
