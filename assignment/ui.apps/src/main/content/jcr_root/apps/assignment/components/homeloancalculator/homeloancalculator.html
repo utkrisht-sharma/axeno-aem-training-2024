@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+ <sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html" ></sly>
+   <sly data-sly-call="${clientlib.css @ categories='assignment.homeloan'}" ></sly>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Loan Eligibility</title>
+</head>
+<body>
+    <div id="form-container">
+        <form id="homeLoanForm" class="form" >
+            <div class="form-group">
+                <label for="clientName" class="form-label">Client Name:</label>
+                <input type="text" id="clientName" name="clientName" class="form-input" >
+            </div>
+            <div class="form-group">
+                <label for="clientIncome" class="form-label">Monthly Income:</label>
+                <input id="clientIncome" name="clientIncome" class="form-input" step="1.0" >
+            </div>
+            <div class="form-group">
+                <label for="loanAmount" class="form-label">Loan Amount:</label>
+                <input id="loanAmount" name="loanAmount" class="form-input" >
+            </div>
+            <div class="form-group">
+                <label for="loanTerm" class="form-label">Loan Term (Months):</label>
+                <input  id="loanTerm" name="loanTerm" class="form-input" >
+            </div>
+            <div class="form-group">
+                <label for="existingEMIs" class="form-label">Existing EMIs:</label>
+                <input id="existingEMIs" name="existingEMIs" class="form-input" step="1.0" >
+            </div>
+            <div class="form-group">
+                <label for="interestRate" class="form-label">Interest Rate (Annual %):</label>
+                <input id="interestRate" name="interestRate" class="form-input" >
+            </div>
+            <div class="form-group">
+                <button type="submit" id="submitBtn" class="form-button">Check Eligibility</button>
+            </div>
+        </form>
+        <div id="loanResult" class="result"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <sly data-sly-call="${clientlib.js @ categories='assignment.homeloan'}" ></sly>
+</body>
+</html>
+
