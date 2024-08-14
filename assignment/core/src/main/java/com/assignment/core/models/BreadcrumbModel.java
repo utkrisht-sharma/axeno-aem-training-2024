@@ -1,8 +1,10 @@
 package com.assignment.core.models;
 
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
+import org.apache.sling.models.annotations.injectorspecific.Self;
 import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 
 import javax.annotation.PostConstruct;
@@ -13,7 +15,7 @@ import java.util.List;
 @Model(adaptables = Resource.class,defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class BreadcrumbModel {
 
-    @SlingObject
+    @Self
     public Resource resource;
 
     public List<Breadcrumb> breadcrumbs;
