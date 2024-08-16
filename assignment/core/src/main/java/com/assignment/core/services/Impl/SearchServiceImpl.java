@@ -26,7 +26,7 @@ import java.util.Map;
  * for searching pages and retrieving top paths from search results.
  */
 @Component(service = SearchService.class)
-public class git SearchServiceImpl implements SearchService {
+public class SearchServiceImpl implements SearchService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SearchServiceImpl.class);
 
