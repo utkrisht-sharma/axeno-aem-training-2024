@@ -1,9 +1,12 @@
 package com.assignment.core.servlets;
 
+import com.assignment.core.models.HomeLoan;
+import com.assignment.core.services.HomeLoanService;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +26,7 @@ import org.json.JSONObject;
  * eligible.
  * </p>
  */
-@Component(service = {Servlet.class},
+@Component(service = {Servlet.class},immediate = true,
         property = {
                 "sling.servlet.resourceTypes=assignment/components/homeloan",
                 "sling.servlet.methods=POST",
@@ -31,8 +34,23 @@ import org.json.JSONObject;
         })
 public class HomeLoanServlet extends SlingAllMethodsServlet {
 
+    /**
+     * Logger for this class. Used for logging information, warnings, and errors.
+     */
     private static final Logger LOG = LoggerFactory.getLogger(HomeLoanServlet.class);
+
+    /**
+     * JSON object used to construct the response.
+     * Initialized once and reused for all responses to improve performance.
+     */
     private final JSONObject jsonResponse = new JSONObject();
+
+    /**
+     * Reference to the HomeLoanService.
+     * This service is injected by the OSGi framework and handles the business logic for loan processing.
+     */
+    @Reference
+    private HomeLoanService homeLoanService;
 
     /**
      * Handles POST requests for loan applications.
@@ -72,8 +90,10 @@ public class HomeLoanServlet extends SlingAllMethodsServlet {
 
             LOG.info("Processing loan application for: {}", clientName);
 
-            if (isEligible(clientIncome, existingEMIs, loanAmount, loanTerm, interestRate)) {
-                Double emi = calculateEMI(loanAmount, loanTerm, interestRate);
+            HomeLoan homeLoan = new HomeLoan(clientIncome, existingEMIs, loanAmount, loanTerm, interestRate);
+
+            if (homeLoanService.isEligible(homeLoan.getClientIncome(), homeLoan.getExistingEMIs(), homeLoan.getLoanAmount(), homeLoan.getLoanTerm(), homeLoan.getInterestRate())) {
+                Double emi = homeLoanService.calculateEMI(homeLoan.getLoanAmount(), homeLoan.getLoanTerm(), homeLoan.getInterestRate());
                 sendSuccessResponse(response, clientName, emi);
             } else {
                 sendRejectionResponse(response, clientName);
@@ -82,48 +102,6 @@ public class HomeLoanServlet extends SlingAllMethodsServlet {
             LOG.error("I/O error occurred while processing the loan application", e);
             sendErrorResponse(response, "An error occurred while processing your request. Please try again later.");
         }
-    }
-
-    /**
-     * Checks if the client is eligible for a loan based on their income,
-     * existing EMIs, and the new loan parameters.
-     * <p>
-     * Eligibility is determined by ensuring that the total EMI (including
-     * existing EMIs) does not exceed 50% of the client's income.
-     * </p>
-     *
-     * @param clientIncome The client's monthly income.
-     * @param existingEMIs The total of existing EMIs.
-     * @param loanAmount   The amount of the new loan.
-     * @param loanTerm     The tenure of the new loan in months.
-     * @param interestRate The annual interest rate for the new loan.
-     * @return true if the client is eligible for the loan, false otherwise.
-     */
-    private boolean isEligible(Double clientIncome, Double existingEMIs, Double loanAmount, int loanTerm, Double interestRate) {
-        Double emi = calculateEMI(loanAmount, loanTerm, interestRate);
-        Double maxAllowedEMI = clientIncome * 0.5;
-        return (existingEMIs + emi) <= maxAllowedEMI;
-    }
-
-    /**
-     * Calculates the EMI (Equated Monthly Installment) based on the loan
-     * amount, loan term, and annual interest rate.
-     * <p>
-     * The EMI is computed using the formula:
-     * EMI = [P x R x (1+R)^N] / [(1+R)^N - 1]
-     * where P is the loan amount, R is the monthly interest rate, and N is
-     * the loan term in months.
-     * </p>
-     *
-     * @param loanAmount   The principal loan amount.
-     * @param loanTerm     The tenure of the loan in months.
-     * @param interestRate The annual interest rate for the loan.
-     * @return The calculated EMI as a double.
-     */
-    private Double calculateEMI(Double loanAmount, int loanTerm, Double interestRate) {
-        Double monthlyRate = interestRate / 1200.0;
-        Double term = Math.pow(1 + monthlyRate, loanTerm);
-        return loanAmount * monthlyRate * term / (term - 1);
     }
 
     /**
