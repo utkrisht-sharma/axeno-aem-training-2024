@@ -5,17 +5,22 @@ import com.adobe.granite.workflow.WorkflowSession;
 import com.adobe.granite.workflow.exec.WorkItem;
 import com.adobe.granite.workflow.exec.WorkflowProcess;
 import com.adobe.granite.workflow.metadata.MetaDataMap;
+import com.assignment.core.PageMetaData.PageData;
 import com.assignment.core.service.PageCreationService;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -24,6 +29,9 @@ import java.util.Objects;
 
 @Component(service = WorkflowProcess.class, property = {"process.label=CSV Page Creation Process"})
 public class PageCreationProcess implements WorkflowProcess {
+
+    private static final Logger log = LoggerFactory.getLogger(PageCreationProcess.class);
+
     @Reference
     private PageCreationService pageCreationService;
 
@@ -33,32 +41,61 @@ public class PageCreationProcess implements WorkflowProcess {
      */
     @Override
     public void execute(WorkItem item, WorkflowSession workflowSession, MetaDataMap metaDataMap) throws WorkflowException {
+        log.info("Execution of execute method started");
         try (ResourceResolver resolver = workflowSession.adaptTo(ResourceResolver.class)) {
             String csvFilePath = item.getWorkflowData().getPayload().toString();
             Resource csvResource = resolver.getResource(csvFilePath);
 
             if (!Objects.isNull(csvResource)) {
                 InputStream csvInputStream = csvResource.adaptTo(InputStream.class);
-                processCSV(csvInputStream, resolver);
+                if (!Objects.isNull(csvInputStream)) {
+                    List<PageData> pages = processCSV(csvInputStream);
+                    for (PageData page : pages) {
+                        pageCreationService.createPage(page.getPath(), page.getTitle(), page.getDescription(), page.getTags(), resolver);
+                    }
+                } else {
+                    log.error("Unable to get InputStream from resource");
+                }
+            } else {
+                log.error("CSV file not found");
             }
         } catch (Exception e) {
-            throw new WorkflowException("Error executing workflow");
+            throw new WorkflowException("Error executing workflow", e);
         }
     }
 
     /**
      * Processes the CSV input stream and creates pages.
      */
-    private void processCSV(InputStream csvInputStream, ResourceResolver resolver) throws Exception {
-        try (CSVParser parser = CSVParser.parse(csvInputStream, StandardCharsets.UTF_8, CSVFormat.DEFAULT.withHeader())) {
-            for (CSVRecord record : parser) {
-                String title = record.get("title");
-                String path = record.get("path");
-                String description = record.get("description");
-                String tags = record.get("tags");
+    private  List<PageData> processCSV(InputStream csvInputStream) throws IOException {
+        log.info("Process CSV Data in processCSV method");
+        List<PageData> pages = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(csvInputStream, StandardCharsets.UTF_8))) {
+            String line;
+            boolean isFirstLine = true;
 
-                pageCreationService.createPage(path, title, description, tags, resolver);
+            while ((line = br.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    continue;
+                }
+
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+
+                String[] pageDetails = line.split(",");
+                String title = pageDetails.length > 0 ? pageDetails[0].trim() : "";
+                String path = pageDetails.length > 1 ? pageDetails[1].trim() : "";
+                String description = pageDetails.length > 2 ? pageDetails[2].trim() : "";
+                String tags = pageDetails.length > 3 ? pageDetails[3].trim() : "";
+
+                if (!title.isEmpty() && !path.isEmpty()) {
+                    pages.add(new PageData(title, path, description, tags));
+                }
             }
         }
+        log.info("CSV File Processed Successfully");
+        return pages;
     }
 }
