@@ -44,9 +44,7 @@ public class CsvReaderServiceImpl implements CsvReaderService {
             return pages;
         }
 
-        InputStream inputStream;
-        try {
-            inputStream = asset.getOriginal().getStream();
+        try (InputStream inputStream = asset.getOriginal().getStream()) {
             if (inputStream == null) {
                 log.error("Could not get InputStream from Asset: {}", csvFilePath);
                 return pages;
@@ -57,41 +55,57 @@ public class CsvReaderServiceImpl implements CsvReaderService {
                 String line;
                 String cvsSplitBy = ",";
 
-                // Skip header line if the CSV has headers
                 boolean isFirstLine = true;
 
                 while ((line = br.readLine()) != null) {
-                    // Skip header line
                     if (isFirstLine) {
                         isFirstLine = false;
                         continue;
                     }
 
-                    // Split line into components
-                    String[] pageDetails = line.split(cvsSplitBy);
-
-                    // Check if the line contains the expected number of columns
-                    if (pageDetails.length >= 5) {
-                        // Trim spaces from each value
-                        for (int i = 0; i < pageDetails.length; i++) {
-                            pageDetails[i] = pageDetails[i].trim();
-                        }
-
-                        // Create PageData object
-                        PageData pageData = new PageData(
-                                pageDetails[0], // title
-                                pageDetails[1], // path
-                                pageDetails[2], // description
-                                pageDetails[3], // tags
-                                pageDetails[4]  // thumbnail
-                        );
-                        pages.add(pageData);
-
-                        // Log the added page data
-                        log.info("Added page data from CSV: Title={}, Path={}", pageData.getTitle(), pageData.getPath());
-                    } else {
-                        log.warn("Skipping invalid CSV line: {}", line);
+                    // Skip empty lines
+                    if (line.trim().isEmpty()) {
+                        continue;
                     }
+
+                    String[] pageDetails = line.split(cvsSplitBy);
+                    for (int i = 0; i < pageDetails.length; i++) {
+                        pageDetails[i] = pageDetails[i].trim();
+                    }
+
+                    // Extract the necessary fields
+                    String title = pageDetails.length > 0 ? pageDetails[0] : "";
+                    String path = pageDetails.length > 1 ? pageDetails[1] : "";
+
+                    // If the required fields are missing, log a warning and skip this line
+                    if (title.isEmpty() || path.isEmpty()) {
+                        log.warn("Skipping invalid CSV line due to missing required fields: Title={}, Path={}", title, path);
+                        continue;
+                    }
+
+                    // Extract optional fields with default values
+                    String description = pageDetails.length > 2 ? pageDetails[2] : "";
+                    String tags = pageDetails.length > 3 ? pageDetails[3] : "";
+                    String thumbnail = pageDetails.length > 4 ? pageDetails[4] : "";
+
+                    // Log info for missing optional fields
+                    if (description.isEmpty()) {
+                        log.info("Description is missing for page with Title: {} at Path: {}", title, path);
+                    }
+
+                    if (tags.isEmpty()) {
+                        log.info("Tags are missing for page with Title: {} at Path: {}", title, path);
+                    }
+
+                    if (thumbnail.isEmpty()) {
+                        log.info("Thumbnail is missing for page with Title: {} at Path: {}", title, path);
+                    }
+
+                    // Create a PageData object and add it to the list
+                    PageData pageData = new PageData(title, path, description, tags, thumbnail);
+                    pages.add(pageData);
+
+                    log.info("Added page data from CSV: Title={}, Path={}", title, path);
                 }
             } catch (IOException e) {
                 log.error("Error reading CSV content: {}", e.getMessage(), e);
@@ -104,3 +118,6 @@ public class CsvReaderServiceImpl implements CsvReaderService {
         return pages;
     }
 }
+
+
+

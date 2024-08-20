@@ -28,4 +28,6 @@ public interface PageCreationService {
 //    void createPage(PageManager pageManager, PageData pageData) throws WCMException;
 
     void createPage(ResourceResolver resolver, PageData pageData) throws RepositoryException, PersistenceException;
+
+    void saveSession(ResourceResolver resolver);
 }

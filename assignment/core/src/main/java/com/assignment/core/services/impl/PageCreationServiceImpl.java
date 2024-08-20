@@ -24,41 +24,78 @@ public class PageCreationServiceImpl implements PageCreationService {
     private static final Logger log = LoggerFactory.getLogger(PageCreationServiceImpl.class);
 
     @Override
-    public void createPage(ResourceResolver resolver, PageData pageData) throws RepositoryException {
+    public void createPage(ResourceResolver resolver, PageData pageData) {
         Session session = resolver.adaptTo(Session.class);
         if (session == null) {
-            throw new RepositoryException("Session could not be retrieved");
+            log.error("Session could not be retrieved");
+            return;
         }
 
-        // Generate a base name for the page using the title
-        String baseName = pageData.getTitle().toLowerCase().replaceAll("\\s+", "-");
+        try {
+            // Generate a base name for the page using the title
+            String baseName = pageData.getTitle().toLowerCase().replaceAll("\\s+", "-");
 
-        Resource parentResource = resolver.getResource(pageData.getPath());
-        if (parentResource == null) {
-            throw new RepositoryException("Parent resource not found at path: " + pageData.getPath());
+            Resource parentResource = resolver.getResource(pageData.getPath());
+            if (parentResource == null) {
+                log.error("Parent resource not found at path: {}", pageData.getPath());
+                return;
+            }
+
+            Node parentNode = parentResource.adaptTo(Node.class);
+            if (parentNode == null) {
+                log.error("Parent node could not be adapted from resource");
+                return;
+            }
+
+            // Generate a unique name by checking for existing nodes
+            String pageName = generateUniquePageName(parentNode, baseName);
+            Node pageNode = parentNode.addNode(pageName, "cq:Page");
+
+            // Create the jcr:content node
+            Node contentNode = pageNode.addNode("jcr:content", "cq:PageContent");
+            contentNode.setProperty(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, "assignment/components/page");
+            contentNode.setProperty("jcr:title", pageData.getTitle());
+
+            // Check and set the description if present
+            if (pageData.getDescription() != null && !pageData.getDescription().isEmpty()) {
+                contentNode.setProperty("jcr:description", pageData.getDescription());
+            } else {
+                log.info("Description is missing for page with Title: {}", pageData.getTitle());
+            }
+
+            // Check and set the tags if present
+            if (pageData.getTags() != null && !pageData.getTags().isEmpty()) {
+                contentNode.setProperty("cq:tags", pageData.getTags().split(";"));
+            } else {
+                log.info("Tags are missing for page with Title: {}", pageData.getTitle());
+            }
+
+            // Check and set the thumbnail if present
+            if (pageData.getThumbnail() != null && !pageData.getThumbnail().isEmpty()) {
+                Node imageNode = contentNode.addNode("image", "nt:unstructured");
+                imageNode.setProperty("fileReference", pageData.getThumbnail());
+            } else {
+                log.info("Thumbnail is missing for page with Title: {}", pageData.getTitle());
+            }
+
+            log.info("Page created at path: {}", pageNode.getPath());
+
+        } catch (RepositoryException e) {
+            log.error("Error creating page for Title: {}. Error: {}", pageData.getTitle(), e.getMessage(), e);
         }
+    }
 
-        Node parentNode = parentResource.adaptTo(Node.class);
-        if (parentNode == null) {
-            throw new RepositoryException("Parent node could not be adapted from resource");
+    @Override
+    public void saveSession(ResourceResolver resolver) {
+        Session session = resolver.adaptTo(Session.class);
+        if (session != null) {
+            try {
+                session.save();
+                log.info("Session saved successfully.");
+            } catch (RepositoryException e) {
+                log.error("Error saving session: {}", e.getMessage(), e);
+            }
         }
-
-        // Generate a unique name by checking for existing nodes
-        String pageName = generateUniquePageName(parentNode, baseName);
-        Node pageNode = parentNode.addNode(pageName, "cq:Page");
-
-        // Create the jcr:content node
-        Node contentNode = pageNode.addNode("jcr:content", "cq:PageContent");
-        contentNode.setProperty(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, "assignment/components/page");
-        contentNode.setProperty("jcr:title", pageData.getTitle());
-        contentNode.setProperty("jcr:description", pageData.getDescription());
-        contentNode.setProperty("cq:tags", pageData.getTags().split(";"));
-        contentNode.setProperty("fileReference", pageData.getThumbnail());
-
-        log.info("Page created at path: {}", pageNode.getPath());
-
-        // Save changes to the repository
-        session.save();
     }
 
     private String generateUniquePageName(Node parentNode, String baseName) throws RepositoryException {
@@ -73,5 +110,7 @@ public class PageCreationServiceImpl implements PageCreationService {
 
         return uniqueName;
     }
-
 }
+
+
+
