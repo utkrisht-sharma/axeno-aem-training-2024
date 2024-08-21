@@ -5,100 +5,126 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
+
+/**
+ * Implementation of the Validation Service.
+ * Provides validation methods for parameter fields.
+ */
 @Component(
-        service = ValidationService.class
+        name = "Validation service",
+        service = ValidationService.class,
+        immediate = true
 )
 public class ValidationServiceImpl implements ValidationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidationServiceImpl.class);
 
+    private static final String NUMBER_REGEX = "^[+-]?([0-9]*[.])?[0-9]+$";  // Regex for valid numbers, including decimals
+    private static final String INTEGER_REGEX = "^[+-]?\\d+$";              // Regex for valid integers
+
+    /**
+     * Validates the client name.
+     *
+     * @return {@code Optional} an error message if validation fails;
+     *         {@code Optional.empty()} if valid.
+     */
     @Override
-    public String validateClientName(String clientName) {
-        String error = validateRequired(clientName, "Client name");
-        if (error != null) {
-            LOG.error("Validation failed for client name: {}", error);
-        }
-        return error;
+    public Optional<String> validateClientName(String clientName) {
+        return validateRequired(clientName, "Client name");
     }
 
+    /**
+     * Validates the client income.
+     *
+     */
     @Override
-    public String validateClientIncome(String clientIncome) {
-        String error = validateNumber(clientIncome, "Client income");
-        if (error != null) {
-            LOG.error("Validation failed for client income: {}", error);
-        }
-        return error;
+    public Optional<String> validateClientIncome(String clientIncome) {
+        return validateNumber(clientIncome, "Client income");
     }
 
+    /**
+     * Validates the loan amount.
+     *
+     */
     @Override
-    public String validateLoanAmount(String loanAmount) {
-        String error = validateNumber(loanAmount, "Loan amount");
-        if (error != null) {
-            LOG.error("Validation failed for loan amount: {}", error);
-        }
-        return error;
+    public Optional<String> validateLoanAmount(String loanAmount) {
+        return validateNumber(loanAmount, "Loan amount");
     }
 
+    /**
+     * Validates the loan term.
+     *
+     */
     @Override
-    public String validateLoanTerm(String loanTerm) {
-        String error = validateInteger(loanTerm, "Loan term");
-        if (error != null) {
-            LOG.error("Validation failed for loan term: {}", error);
-        }
-        return error;
+    public Optional<String> validateLoanTerm(String loanTerm) {
+        return validateInteger(loanTerm, "Loan term");
     }
 
+    /**
+     * Validates the existing EMIs.
+     *
+     */
     @Override
-    public String validateExistingEMIs(String existingEMIs) {
-        String error = validateNumber(existingEMIs, "Existing EMIs");
-        if (error != null) {
-            LOG.error("Validation failed for existing EMIs: {}", error);
-        }
-        return error;
+    public Optional<String> validateExistingEMIs(String existingEMIs) {
+        return validateNumber(existingEMIs, "Existing EMIs");
     }
 
+    /**
+     * Validates the interest rate.
+     *
+     */
     @Override
-    public String validateInterestRate(String interestRate) {
-        String error = validateNumber(interestRate, "Interest rate");
-        if (error != null) {
-            LOG.error("Validation failed for interest rate: {}", error);
-        }
-        return error;
+    public Optional<String> validateInterestRate(String interestRate) {
+        return validateNumber(interestRate, "Interest rate");
     }
 
-    private String validateRequired(String value, String fieldName) {
+    /**
+     * Validates that a field value is not null or empty.
+     *
+     * @return {@code Optional} containing an error message if the value is null or empty;
+     *         {@code Optional.empty()} if the value is valid.
+     */
+    private Optional<String> validateRequired(String value, String fieldName) {
         if (value == null || value.trim().isEmpty()) {
-            return fieldName + " is required.";
+            return Optional.of(fieldName + " is required.");
         }
-        return null;
+        return Optional.empty();
     }
 
-    private String validateNumber(String value, String fieldName) {
-        String error = validateRequired(value, fieldName);
-        if (error != null) {
+    /**
+     * Validates that a value matches the number format.
+     *
+     * @return {@code Optional} containing an error message if the value does not match the number format;
+     *         {@code Optional.empty()} if the value is valid.
+     */
+    private Optional<String> validateNumber(String value, String fieldName) {
+        Optional<String> error = validateRequired(value, fieldName);
+        if (error.isPresent()) {
             return error;
         }
-        try {
-
-            Double.parseDouble(value);
-        } catch (NumberFormatException e) {
-            LOG.error("Number format error for {}: {}", fieldName, e.getMessage());
-            return "Invalid " + fieldName.toLowerCase() + " format. Please enter a valid number.";
+        if (!value.matches(NUMBER_REGEX)) {
+            LOG.error("Number format error for {}: {}", fieldName, value);
+            return Optional.of("Invalid " + fieldName.toLowerCase() + " format. Please enter a valid number.");
         }
-        return null;
+        return Optional.empty();
     }
 
-    private String validateInteger(String value, String fieldName) {
-        String error = validateRequired(value, fieldName);
-        if (error != null) {
+    /**
+     * Validates that a value matches the integer format.
+     *
+     * @return {@code Optional} containing an error message if the value does not match the integer format;
+     *         {@code Optional.empty()} if the value is valid.
+     */
+    private Optional<String> validateInteger(String value, String fieldName) {
+        Optional<String> error = validateRequired(value, fieldName);
+        if (error.isPresent()) {
             return error;
         }
-        try {
-            Integer.parseInt(value);
-        } catch (NumberFormatException e) {
-            LOG.error("Integer format error for {}: {}", fieldName, e.getMessage());
-            return "Invalid " + fieldName.toLowerCase() + " format. Please enter a valid number.";
+        if (!value.matches(INTEGER_REGEX)) {
+            LOG.error("Integer format error for {}: {}", fieldName, value);
+            return Optional.of("Invalid " + fieldName.toLowerCase() + " format. Please enter a valid integer.");
         }
-        return null;
+        return Optional.empty();
     }
 }

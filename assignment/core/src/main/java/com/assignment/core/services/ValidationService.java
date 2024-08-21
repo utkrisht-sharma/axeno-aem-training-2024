@@ -1,12 +1,20 @@
 package com.assignment.core.services;
 
+
+import java.util.Optional;
+
+/**
+ * Service interface for validating various client and loan-related fields.
+ * Provides methods to validate client name, income, loan amount, loan term,
+ * existing EMIs, and interest rate.
+ */
 public interface ValidationService {
 
 
-    String validateClientName(String clientName);
-    String validateClientIncome(String clientIncome);
-    String validateLoanAmount(String loanAmount);
-    String validateLoanTerm(String loanTerm);
-    String validateExistingEMIs(String existingEMIs);
-    String validateInterestRate(String interestRate);
+    Optional<String> validateClientName(String clientName);
+    Optional<String> validateClientIncome(String clientIncome);
+    Optional<String> validateLoanAmount(String loanAmount);
+    Optional<String> validateLoanTerm(String loanTerm);
+    Optional<String> validateExistingEMIs(String existingEMIs);
+    Optional<String> validateInterestRate(String interestRate);
 }

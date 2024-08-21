@@ -6,6 +6,7 @@ import com.assignment.core.services.ValidationService;
 import com.google.gson.JsonObject;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.servlets.ServletResolverConstants;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -15,13 +16,17 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.Optional;
 
+/**
+ * Servlet to handle POST requests for home loan eligibility and EMI calculation.
+ */
 @Component(
         service = { Servlet.class },
         property = {
-                "sling.servlet.resourceTypes=assignment/components/homeloancalculator",
-                "sling.servlet.methods=POST",
-                "sling.servlet.extensions=json"
+                ServletResolverConstants.SLING_SERVLET_RESOURCE_TYPES + "=assignment/components/homeloancalculator",
+                ServletResolverConstants.SLING_SERVLET_METHODS + "=POST",
+                ServletResolverConstants.SLING_SERVLET_EXTENSIONS + "=json"
         }
 )
 public class HomeLoanEligibilityServlet extends SlingAllMethodsServlet {
@@ -37,6 +42,14 @@ public class HomeLoanEligibilityServlet extends SlingAllMethodsServlet {
     @Reference
     private EMICalculationService emiCalculationService;
 
+    /**
+     * Handles POST requests to process home loan eligibility and calculate EMI.
+     *
+     * @param request  The Sling HTTP servlet request.
+     * @param response The Sling HTTP servlet response.
+     * @throws ServletException If an error occurs during servlet processing.
+     * @throws IOException      If an I/O error occurs during request handling.
+     */
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -54,11 +67,11 @@ public class HomeLoanEligibilityServlet extends SlingAllMethodsServlet {
             String interestRate = request.getParameter("interestRate");
 
             // Validate parameters
-            String errorMessage = validateParameters(clientName, clientIncome, loanAmount, loanTerm, existingEMIs, interestRate);
-            if (errorMessage != null) {
-                LOG.error("Validation failed: {}", errorMessage);
+            Optional<String> errorMessage = validateParameters(clientName, clientIncome, loanAmount, loanTerm, existingEMIs, interestRate);
+            if (errorMessage.isPresent()) {
+                LOG.error("Validation failed: {}", errorMessage.get());
                 response.setStatus(SlingHttpServletResponse.SC_BAD_REQUEST);
-                jsonResponse.addProperty("error", errorMessage);
+                jsonResponse.addProperty("error", errorMessage.get());
                 response.getWriter().write(jsonResponse.toString());
                 return;
             }
@@ -73,19 +86,12 @@ public class HomeLoanEligibilityServlet extends SlingAllMethodsServlet {
             // Check loan eligibility
             boolean isEligible = loanEligibilityService.isEligible(clientIncomeValue, loanAmountValue, loanTermValue, existingEMIsValue, interestRateValue);
 
-            if (isEligible) {
-                // Calculate EMI
-                double emi = emiCalculationService.calculateEMI(loanAmountValue, interestRateValue, loanTermValue);
-                jsonResponse.addProperty("clientName", clientName);
-                jsonResponse.addProperty("eligible", true);
-                jsonResponse.addProperty("emi", Math.round(emi * 100.0) / 100.0);
-                jsonResponse.addProperty("message", "Loan Approved");
-            } else {
-                jsonResponse.addProperty("clientName", clientName);
-                jsonResponse.addProperty("eligible", false);
-                jsonResponse.addProperty("emi", "N/A");
-                jsonResponse.addProperty("message", "Loan Rejected");
-            }
+            // Calculate EMI
+            double emi = emiCalculationService.calculateEMI(loanAmountValue, interestRateValue, loanTermValue);
+            jsonResponse.addProperty("clientName", clientName);
+            jsonResponse.addProperty("eligible", isEligible);
+            jsonResponse.addProperty("emi", isEligible ? String.format("%.2f", emi) : "N/A");
+            jsonResponse.addProperty("message", "Loan Approved");
 
             response.getWriter().write(jsonResponse.toString());
 
@@ -97,15 +103,22 @@ public class HomeLoanEligibilityServlet extends SlingAllMethodsServlet {
         }
     }
 
-    private String validateParameters(String clientName, String clientIncome, String loanAmount, String loanTerm, String existingEMIs, String interestRate) {
-        String errorMessage;
+    /**
+     * Validates the request parameters.
+     *
+     * @return {@code Optional} containing an error message if validation fails;
+     *         {@code Optional.empty()} if all parameters are valid.
+     */
+    private Optional<String> validateParameters(String clientName, String clientIncome, String loanAmount, String loanTerm, String existingEMIs, String interestRate) {
+        Optional<String> errorMessage;
 
-        if ((errorMessage = validationService.validateClientName(clientName)) != null) return errorMessage;
-        if ((errorMessage = validationService.validateClientIncome(clientIncome)) != null) return errorMessage;
-        if ((errorMessage = validationService.validateLoanAmount(loanAmount)) != null) return errorMessage;
-        if ((errorMessage = validationService.validateLoanTerm(loanTerm)) != null) return errorMessage;
-        if ((errorMessage = validationService.validateExistingEMIs(existingEMIs)) != null) return errorMessage;
-        if ((errorMessage = validationService.validateInterestRate(interestRate)) != null) return errorMessage;
-        return null;
+        if ((errorMessage = validationService.validateClientName(clientName)).isPresent()) return errorMessage;
+        if ((errorMessage = validationService.validateClientIncome(clientIncome)).isPresent()) return errorMessage;
+        if ((errorMessage = validationService.validateLoanAmount(loanAmount)).isPresent()) return errorMessage;
+        if ((errorMessage = validationService.validateLoanTerm(loanTerm)).isPresent()) return errorMessage;
+        if ((errorMessage = validationService.validateExistingEMIs(existingEMIs)).isPresent()) return errorMessage;
+        if ((errorMessage = validationService.validateInterestRate(interestRate)).isPresent()) return errorMessage;
+
+        return Optional.empty();
     }
 }
