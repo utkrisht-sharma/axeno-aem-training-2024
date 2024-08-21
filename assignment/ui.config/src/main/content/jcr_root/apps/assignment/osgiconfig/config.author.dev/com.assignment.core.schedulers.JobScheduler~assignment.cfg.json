@@ -1,0 +1,5 @@
+{
+  "schedulerName" : "Job Scheduler",
+  "cronExpression" : "0 0/1 * 1/1 * ? *",
+  "enabled": "true"
+}
