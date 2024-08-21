@@ -13,7 +13,7 @@ public @interface WorkflowSchedulerConfiguration {
      * @return {@link String}
      */
     @AttributeDefinition(name = "Scheduler name", description = "Name of the scheduler", type = AttributeType.STRING)
-    public String schedulerName() default "Workflow Scheduler configuration";
+    public String schedulerName() default "";
 
     /**
      * This method will set flag to enable the scheduler
@@ -32,7 +32,7 @@ public @interface WorkflowSchedulerConfiguration {
      */
 
     @AttributeDefinition(name = "Cron Expression", description = "Cron expression used by the scheduler", type = AttributeType.STRING)
-    public String cronExpression() default "0 0 12 1/1 * ? *";
+    public String cronExpression() default "";
 
     /**
      * This method returns the csv Path

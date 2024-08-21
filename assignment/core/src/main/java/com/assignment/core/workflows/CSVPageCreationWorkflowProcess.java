@@ -8,23 +8,26 @@ import com.day.cq.dam.api.Asset;
 import com.day.cq.dam.api.Rendition;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.resource.ResourceResolverFactory;
+import com.day.cq.wcm.api.WCMException;
+import org.apache.commons.logging.Log;
+import org.apache.sling.api.resource.*;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * Workflow process for creating pages from a CSV file in DAM.
+ */
 @Component(service = WorkflowProcess.class, property = {"process.label=CSV Page Creation Process"})
 public class CSVPageCreationWorkflowProcess implements WorkflowProcess {
 
@@ -33,22 +36,24 @@ public class CSVPageCreationWorkflowProcess implements WorkflowProcess {
     @Reference
     private ResourceResolverFactory resourceResolverFactory;
 
+    /**
+     * Executes the workflow process to create pages from a CSV file.
+     *
+     * @param workItem The work item containing the workflow data.
+     * @param workflowSession The session used to execute the workflow.
+     * @param metaDataMap Metadata associated with the workflow.
+     */
     @Override
     public void execute(WorkItem workItem, WorkflowSession workflowSession, MetaDataMap metaDataMap) {
         ResourceResolver resourceResolver = null;
         try {
-            // Get the payload (CSV file path)
             String payloadPath = workItem.getWorkflowData().getPayload().toString();
-
-            // Get resource resolver from workflow session
             resourceResolver = workflowSession.adaptTo(ResourceResolver.class);
 
-            // Load the CSV file from the payload path
             Resource resource = resourceResolver.getResource(payloadPath);
             if (resource != null) {
                 log.info("Resource found at path: {}, Resource Type: {}", payloadPath, resource.getResourceType());
 
-                // adapting the resource to an Asset to obtain the InputStream
                 Asset asset = resource.adaptTo(Asset.class);
                 if (asset != null) {
                     Rendition original = asset.getOriginal();
@@ -66,7 +71,7 @@ public class CSVPageCreationWorkflowProcess implements WorkflowProcess {
             } else {
                 log.error("Resource not found at path: {}", payloadPath);
             }
-        } catch (Exception e) {
+        } catch (RepositoryException | WCMException | IOException e) {
             log.error("Error during CSV Page Creation Workflow Process", e);
         } finally {
             if (resourceResolver != null) {
@@ -75,7 +80,14 @@ public class CSVPageCreationWorkflowProcess implements WorkflowProcess {
         }
     }
 
-    private void processCSV(InputStream inputStream, ResourceResolver resourceResolver) throws Exception {
+    /**
+     * Processes the CSV file to create pages.
+     *
+     * @param inputStream The InputStream of the CSV file.
+     * @param resourceResolver The resource resolver for page creation.
+     * @throws Exception If an error occurs during CSV processing.
+     */
+    private void processCSV(InputStream inputStream, ResourceResolver resourceResolver) throws IOException, RepositoryException, WCMException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         boolean isFirstLine = true;
@@ -87,70 +99,61 @@ public class CSVPageCreationWorkflowProcess implements WorkflowProcess {
         }
 
         while ((line = reader.readLine()) != null) {
-            // Skip the header line
             if (isFirstLine) {
                 isFirstLine = false;
                 continue;
             }
 
-            // Split the line by commas to extract values
             List<String> values = Arrays.asList(line.split(","));
             if (values.size() < 5) {
                 log.error("Invalid CSV line, not enough columns: {}", line);
                 continue;
             }
 
-            // Extract details from each line
             String title = values.get(0).trim();
             String path = values.get(1).trim();
             String description = values.get(2).trim();
             String tags = values.get(3).trim();
             String thumbnail = values.get(4).trim();
 
-            // Generate valid and unique page name
-            String validAndUniquePageName = createValidAndUniquePageName(pageManager, title, path);
+            String validPageName = createValidPageName(title);
 
-            // Create the page
-            createPage( pageManager, path, validAndUniquePageName, title, description, tags, thumbnail);
+            createPage(pageManager, path, validPageName, title, description, tags, thumbnail);
         }
     }
 
-    private String createValidAndUniquePageName(PageManager pageManager, String title, String parentPath) {
-        // Generate a valid page name
-        String validPageName = generateValidPageName(title);
-
-        // Ensure the name is unique
-        String uniquePageName = validPageName;
-        int counter = 1;
-
-        while (pageManager.getPage(parentPath + "/" + uniquePageName) != null) {
-            // Append a counter to the page name if it already exists
-            uniquePageName = validPageName + "-" + counter++;
-        }
-
-        return uniquePageName;
+    /**
+     * Creates a valid page name from the given title.
+     *
+     */
+    private String createValidPageName(String title) {
+        String validName = title.replaceAll("[^\\p{Alnum}_]", "-");
+        return validName.length() > 50 ? validName.substring(0, 50) : validName;
     }
 
-    private String generateValidPageName(String title) {
-        // Replace invalid characters and trim the title to create a valid page name
-        String validName = title.replaceAll("[^\\p{Alnum}_]", "-"); // Replace non-alphanumeric characters with "-"
-        return validName.length() > 50 ? validName.substring(0, 50) : validName; // Limit length to 50 characters
-    }
+    /**
+     * Creates a page with the given details.
+     *
+     * @param pageManager  PageManager to create the page.
+     * @param path  path where the page will be created.
+     * @param pageName  name of the page.
+     * @param title  title of the page.
+     * @param description  description of the page.
+     * @param tags  tags for the page.
+     * @param thumbnail thumbnail path for the page from asset.
+     */
+    private void createPage(PageManager pageManager, String path, String pageName, String title, String description, String tags, String thumbnail)
+            throws RepositoryException , WCMException {
 
-    private void createPage( PageManager pageManager, String path, String pageName, String title, String description, String tags, String thumbnail) {
-        try {
-            Page page = pageManager.create(path, pageName, "/conf/global/settings/wcm/templates/page", title);
-            if (page != null) {
-                Node contentNode = page.getContentResource().adaptTo(Node.class);
-                if (contentNode != null) {
-                    contentNode.setProperty("jcr:description", description);
-                    contentNode.setProperty("cq:tags", tags.split(";"));
-                    contentNode.setProperty("cq:templateThumbnail", thumbnail);
-                    log.info("Page created at: {}", page.getPath());
-                }
+        Page page = pageManager.create(path, pageName, "/conf/global/settings/wcm/templates/page", title);
+        if (page != null) {
+            Node contentNode = page.getContentResource().adaptTo(Node.class);
+            if (contentNode != null) {
+                contentNode.setProperty("jcr:description", description);
+                contentNode.setProperty("cq:tags", tags.split(";"));
+                contentNode.setProperty("cq:templateThumbnail", thumbnail);
+                log.info("Page created at: {}", page.getPath());
             }
-        } catch (Exception e) {
-            log.error("Error creating page with name: {}", pageName, e);
         }
     }
 

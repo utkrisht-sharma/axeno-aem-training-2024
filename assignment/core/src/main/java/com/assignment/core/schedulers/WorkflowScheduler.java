@@ -1,4 +1,3 @@
-
 package com.assignment.core.schedulers;
 
 import org.apache.sling.api.resource.ResourceResolver;
@@ -18,16 +17,23 @@ import com.adobe.granite.workflow.WorkflowSession;
 import com.adobe.granite.workflow.exec.WorkflowData;
 import com.adobe.granite.workflow.model.WorkflowModel;
 import com.assignment.core.config.WorkflowSchedulerConfiguration;
-import com.google.common.base.Strings;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Component(service = Runnable.class, immediate = true)
+/**
+ * Scheduler component to manage and execute workflow.
+ *
+ */
+@Component(
+        name = "Workflow Scheduler",
+        service = Runnable.class,
+        immediate = true)
 @Designate(ocd = WorkflowSchedulerConfiguration.class)
 public class WorkflowScheduler implements Runnable {
 
     private final Logger logger = LoggerFactory.getLogger(WorkflowScheduler.class);
+
 
     @Reference
     private Scheduler scheduler;
@@ -36,63 +42,85 @@ public class WorkflowScheduler implements Runnable {
     private ResourceResolverFactory resourceResolverFactory;
 
     private String csvPath;
-    private String schedulerName;
+    private int schedulerId;
     private String model;
 
+    /**
+     * Activates the scheduler with the provided configuration.
+     *
+     * @param configuration The configuration to apply.
+     */
     @Activate
     private void activate(WorkflowSchedulerConfiguration configuration) {
         logger.info("Activating Workflow Scheduler with configuration: {}", configuration);
         this.csvPath = configuration.csvPath();
-        this.schedulerName = configuration.schedulerName();
+        this.schedulerId = configuration.schedulerName().hashCode();
         this.model = configuration.model();
         addScheduler(configuration);
     }
 
+    /**
+     * Updates the scheduler with new configuration.
+     *
+     * @param configuration The updated configuration.
+     */
     @Modified
     protected void modified(WorkflowSchedulerConfiguration configuration) {
         logger.info("Modifying Workflow Scheduler with new configuration: {}", configuration);
-        removeScheduler(configuration);
+        removeScheduler();
         this.csvPath = configuration.csvPath();
-        this.schedulerName = configuration.schedulerName();
+        this.schedulerId = configuration.schedulerName().hashCode();
         this.model = configuration.model();
         addScheduler(configuration);
     }
 
+    /**
+     * Deactivates and removes the scheduler.
+     *
+     */
     @Deactivate
-    protected void deactivated(WorkflowSchedulerConfiguration configuration) {
+    protected void deactivate() {
         logger.info("Deactivating Workflow Scheduler.");
-        removeScheduler(configuration);
+        removeScheduler();
     }
 
-    private void addScheduler(WorkflowSchedulerConfiguration configuration) {
-        boolean enabled = configuration.enabled();
+    /**
+     * Adds a scheduler with the specified configuration.
+     *
+     * @param config The configuration to use for scheduling.
+     */
+    private void addScheduler(WorkflowSchedulerConfiguration config) {
+        boolean enabled = config.enabled();
         if (enabled) {
-            ScheduleOptions scheduleOptions = scheduler.EXPR(configuration.cronExpression());
-            if (!Strings.isNullOrEmpty(schedulerName)) {
-                scheduleOptions.name(schedulerName);
-                scheduleOptions.canRunConcurrently(false);
-                scheduler.schedule(this, scheduleOptions);
-                logger.info("Workflow Scheduler added successfully with name: {}", schedulerName);
-                ScheduleOptions scheduleOptionsNow = scheduler.NOW();
-                scheduler.schedule(this,scheduleOptionsNow);
-            } else {
-                logger.warn("Scheduler name is empty or null. Cannot schedule.");
-            }
+            ScheduleOptions scheduleOptions = scheduler.EXPR(config.cronExpression());
+            scheduleOptions.name(String.valueOf(schedulerId));
+            scheduleOptions.canRunConcurrently(false);
+            scheduler.schedule(this, scheduleOptions);
+            logger.info("Workflow Scheduler added successfully with name: {}", schedulerId);
+
+            ScheduleOptions scheduleOptionsNow = scheduler.NOW();
+            scheduler.schedule(this, scheduleOptionsNow);
         } else {
             logger.info("Workflow Scheduler is in disabled state.");
         }
     }
 
-    private void removeScheduler(WorkflowSchedulerConfiguration configuration) {
-        logger.info("Removing Workflow Scheduler with name: {}", schedulerName);
-        scheduler.unschedule(schedulerName);
+    /**
+     * Removes the scheduler.
+     *
+     */
+    private void removeScheduler() {
+        logger.info("Removing Workflow Scheduler with name: {}", schedulerId);
+        scheduler.unschedule(String.valueOf(schedulerId));
     }
 
+    /**
+     * Executes the workflow based on the configuration.
+     */
     @Override
     public void run() {
         ResourceResolver resourceResolver = null;
         try {
-            // Get a resource resolver with appropriate service user mapping
             Map<String, Object> param = new HashMap<>();
             param.put(ResourceResolverFactory.SUBSERVICE, "workflowservice");
             resourceResolver = resourceResolverFactory.getServiceResourceResolver(param);
