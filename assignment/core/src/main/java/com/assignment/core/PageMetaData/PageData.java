@@ -5,12 +5,13 @@ public class PageData {
     private String path;
     private String description;
     private String tags;
-
-    public PageData(String title, String path, String description, String tags) {
+    private String thumbnail;
+    public PageData(String title, String path, String description, String tags, String thumbnail) {
         this.title = title;
         this.path = path;
         this.description = description;
         this.tags = tags;
+        this.thumbnail = thumbnail;
     }
 
     public String getTitle() {
@@ -28,4 +29,6 @@ public class PageData {
     public String getTags() {
         return tags;
     }
+
+    public String getThumbnail(){ return  thumbnail; }
 }

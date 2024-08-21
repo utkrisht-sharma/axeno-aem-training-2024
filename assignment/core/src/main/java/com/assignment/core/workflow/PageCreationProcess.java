@@ -1,5 +1,6 @@
 package com.assignment.core.workflow;
 
+
 import com.adobe.granite.workflow.WorkflowException;
 import com.adobe.granite.workflow.WorkflowSession;
 import com.adobe.granite.workflow.exec.WorkItem;
@@ -7,6 +8,7 @@ import com.adobe.granite.workflow.exec.WorkflowProcess;
 import com.adobe.granite.workflow.metadata.MetaDataMap;
 import com.assignment.core.PageMetaData.PageData;
 import com.assignment.core.service.PageCreationService;
+import com.day.cq.dam.api.Asset;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.service.component.annotations.Component;
@@ -37,7 +39,6 @@ public class PageCreationProcess implements WorkflowProcess {
 
     /**
      * Executes the workflow process to create pages based on the CSV file.
-
      */
     @Override
     public void execute(WorkItem item, WorkflowSession workflowSession, MetaDataMap metaDataMap) throws WorkflowException {
@@ -47,15 +48,25 @@ public class PageCreationProcess implements WorkflowProcess {
             Resource csvResource = resolver.getResource(csvFilePath);
 
             if (!Objects.isNull(csvResource)) {
-                InputStream csvInputStream = csvResource.adaptTo(InputStream.class);
-                if (!Objects.isNull(csvInputStream)) {
-                    List<PageData> pages = processCSV(csvInputStream);
-                    for (PageData page : pages) {
-                        pageCreationService.createPage(page.getPath(), page.getTitle(), page.getDescription(), page.getTags(), resolver);
+                log.info("CSV Resource Is Not Null");
+                Asset asset = csvResource.adaptTo(Asset.class);
+                if (!Objects.isNull(asset)) {
+                    try (InputStream csvInputStream = asset.getOriginal().getStream()) {
+                        if (!Objects.isNull(csvInputStream)) {
+                            log.info("CSV Input Stream Is Not Null");
+                            List<PageData> pages = processCSV(csvInputStream);
+                            for (PageData page : pages) {
+                                pageCreationService.createPage(page.getPath(), page.getTitle(), page.getDescription(), page.getTags(), page.getThumbnail(), resolver);
+                            }
+                        } else {
+                            log.error("Unable to get InputStream from resource");
+                        }
+
                     }
                 } else {
-                    log.error("Unable to get InputStream from resource");
+                    log.error("Failed to adapt resource to Asset");
                 }
+
             } else {
                 log.error("CSV file not found");
             }
@@ -67,7 +78,7 @@ public class PageCreationProcess implements WorkflowProcess {
     /**
      * Processes the CSV input stream and creates pages.
      */
-    private  List<PageData> processCSV(InputStream csvInputStream) throws IOException {
+    private List<PageData> processCSV(InputStream csvInputStream) throws IOException {
         log.info("Process CSV Data in processCSV method");
         List<PageData> pages = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(csvInputStream, StandardCharsets.UTF_8))) {
@@ -89,9 +100,9 @@ public class PageCreationProcess implements WorkflowProcess {
                 String path = pageDetails.length > 1 ? pageDetails[1].trim() : "";
                 String description = pageDetails.length > 2 ? pageDetails[2].trim() : "";
                 String tags = pageDetails.length > 3 ? pageDetails[3].trim() : "";
-
+                String thumbnailPath = pageDetails.length > 4 ? pageDetails[4].trim() : "";
                 if (!title.isEmpty() && !path.isEmpty()) {
-                    pages.add(new PageData(title, path, description, tags));
+                    pages.add(new PageData(title, path, description, tags, thumbnailPath));
                 }
             }
         }
