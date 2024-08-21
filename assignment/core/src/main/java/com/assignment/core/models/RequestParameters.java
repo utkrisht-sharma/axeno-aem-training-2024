@@ -1,7 +1,10 @@
 package com.assignment.core.models;
 
-
+/**
+ * Represents the parameters used for searching and other operations.
+ */
 public class RequestParameters {
+
     private String searchPath;
     private String propertyOne;
     private String propertyOneValue;
@@ -9,6 +12,10 @@ public class RequestParameters {
     private String propertyTwoValue;
     private String saveParam;
 
+    /**
+     * Constructs a new RequestParameters instance with the specified values.
+     *
+     */
     public RequestParameters(String searchPath, String propertyOne, String propertyOneValue, String propertyTwo, String propertyTwoValue, String saveParam) {
         this.searchPath = searchPath;
         this.propertyOne = propertyOne;
@@ -18,9 +25,11 @@ public class RequestParameters {
         this.saveParam = saveParam;
     }
 
+
     public String getSearchPath() {
         return searchPath;
     }
+
 
     public String getPropertyOne() {
         return propertyOne;
@@ -30,9 +39,11 @@ public class RequestParameters {
         return propertyOneValue;
     }
 
+
     public String getPropertyTwo() {
         return propertyTwo;
     }
+
 
     public String getPropertyTwoValue() {
         return propertyTwoValue;

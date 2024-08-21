@@ -9,8 +9,6 @@ import com.day.cq.search.result.Hit;
 import com.day.cq.search.result.SearchResult;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.resource.*;
-import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
@@ -23,7 +21,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component(service = SearchService.class)
+/**
+ * Implementation of the SearchService for searching pages based on request parameters.
+ */
+@Component(
+        name ="Page search service",
+        service = SearchService.class,
+        immediate = true
+)
 public class SearchServiceImpl implements SearchService {
 
     private static final Logger log = LoggerFactory.getLogger(SearchServiceImpl.class);
@@ -34,13 +39,21 @@ public class SearchServiceImpl implements SearchService {
     @Reference
     private ResourceResolverFactory resourceResolverFactory;
 
+    /**
+     * Searches for pages based on the provided parameters.
+     *
+     * @param params The search parameters.
+     * @return A Pair containing a list of result paths and the total number of matches.
+     * @throws LoginException If there is an issue with obtaining the ResourceResolver.
+     * @throws RepositoryException If there is an issue with the JCR repository.
+     */
     @Override
     public Pair<List<String>, Integer> searchPages(RequestParameters params) throws LoginException, RepositoryException {
         List<String> resultPaths = new ArrayList<>();
         int totalMatches = 0;
 
         try (ResourceResolver resourceResolver = resourceResolverFactory.getServiceResourceResolver(createServiceUserMap())) {
-            log.info("Starting search the pages..");
+            log.info("Starting search for pages...");
 
             // Query for total matches
             Map<String, String> totalQueryMap = createQueryMap(params);
@@ -69,7 +82,12 @@ public class SearchServiceImpl implements SearchService {
         return Pair.of(resultPaths, totalMatches);
     }
 
-
+    /**
+     * Creates a map of query parameters based on the provided request parameters.
+     *
+     * @param params The search parameters.
+     * @return A map containing query parameters.
+     */
     private Map<String, String> createQueryMap(RequestParameters params) {
         Map<String, String> queryMap = new HashMap<>();
         queryMap.put("path", params.getSearchPath());
@@ -84,6 +102,11 @@ public class SearchServiceImpl implements SearchService {
         return queryMap;
     }
 
+    /**
+     * Creates a map for the service user to access the repository.
+     *
+     * @return A map with service user credentials.
+     */
     private Map<String, Object> createServiceUserMap() {
         Map<String, Object> serviceUserMap = new HashMap<>();
         serviceUserMap.put(ResourceResolverFactory.SUBSERVICE, "datawriteservice");

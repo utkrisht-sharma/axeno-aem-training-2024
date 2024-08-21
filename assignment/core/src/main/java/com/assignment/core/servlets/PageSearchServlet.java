@@ -1,4 +1,3 @@
-
 package com.assignment.core.servlets;
 
 import com.assignment.core.models.RequestParameters;
@@ -18,10 +17,16 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.jcr.RepositoryException;
 
+/**
+ * Servlet for handling page search requests.
+ * and handle saving or deleting nodes based on the search results.
+ */
 @Component(service = Servlet.class,
         property = {
                 ServletResolverConstants.SLING_SERVLET_PATHS + "=/bin/pagesearch",
@@ -40,9 +45,19 @@ public class PageSearchServlet extends SlingAllMethodsServlet {
     @Reference
     private ValidationService validationService;
 
+    /**
+     * Handles POST requests to search for pages and process node actions.
+     *
+     * @param request  The SlingHttpServletRequest containing the search parameters.
+     * @param response The SlingHttpServletResponse to send the response back to the client.
+     * @throws IOException If an I/O error occurs during request processing.
+     * @throws ServletException If a servlet error occurs during request processing.
+     */
     @Override
-    protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException, ServletException {
-                RequestParameters params = new RequestParameters(
+    protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
+            throws IOException, ServletException {
+        // Extract parameters from the request
+        RequestParameters params = new RequestParameters(
                 request.getParameter("path"),
                 request.getParameter("propertyOne"),
                 request.getParameter("propertyOneValue"),
@@ -52,9 +67,9 @@ public class PageSearchServlet extends SlingAllMethodsServlet {
         );
 
         // Validate Parameters
-        String validationError = validationService.validateSearchParameters(params);
-        if (validationError != null) {
-            response.sendError(SlingHttpServletResponse.SC_BAD_REQUEST, validationError);
+        Optional<String> validationError = validationService.validateSearchParameters(params);
+        if (validationError.isPresent()) {
+            response.sendError(SlingHttpServletResponse.SC_BAD_REQUEST, validationError.get());
             return;
         }
 

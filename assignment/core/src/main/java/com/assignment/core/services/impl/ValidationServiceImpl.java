@@ -7,49 +7,55 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(service = ValidationService.class)
+import java.util.Optional;
+
+/**
+ * Implementation of the ValidationService for validating search parameters.
+ */
+@Component(
+        name= "Validation service",
+        service = ValidationService.class,
+        immediate = true
+)
 public class ValidationServiceImpl implements ValidationService {
 
     private static final Logger log = LoggerFactory.getLogger(ValidationServiceImpl.class);
-    String errorMessage;
 
+    /**
+     * Validates the provided search parameters.
+     *
+     * @param params request parameters to validate.
+     * @return An Optional containing an error message if validation fails, otherwise an empty Optional.
+     */
     @Override
-    public String validateSearchParameters(RequestParameters params) {
-        log.info(" Validating parameters: " );
+    public Optional<String> validateSearchParameters(RequestParameters params) {
+        log.info("Validating parameters...");
 
         if (StringUtils.isBlank(params.getSearchPath())) {
-            errorMessage = "Search path is missing.";
-            log.error(errorMessage);
-            return errorMessage;
-        }
-        if (StringUtils.isBlank(params.getPropertyOne())) {
-            errorMessage = "Property One is missing.";
-            log.error(errorMessage);
-            return errorMessage;
-        }
-        if (StringUtils.isBlank(params.getPropertyOneValue())) {
-            errorMessage = "Property One Value is missing.";
-            log.error(errorMessage);
-            return errorMessage;
-        }
-        if (StringUtils.isBlank(params.getPropertyTwo())) {
-            errorMessage = "Property Two is missing.";
-            log.error(errorMessage);
-            return errorMessage;
-        }
-        if (StringUtils.isBlank(params.getPropertyTwoValue())) {
-            errorMessage = "Property Two Value is missing.";
-            log.error(errorMessage);
-            return errorMessage;
-        }
-        if (StringUtils.isBlank(params.getSaveParam())) {
-            errorMessage = "Save parameter is missing.";
-            log.error(errorMessage);
-            return errorMessage;
+            return Optional.of("Search path is missing.");
         }
 
-        log.info("Validation successful.." );
-        return null;
+        if (StringUtils.isBlank(params.getPropertyOne())) {
+            return Optional.of("Property One is missing.");
+        }
+
+        if (StringUtils.isBlank(params.getPropertyOneValue())) {
+            return Optional.of("Property One Value is missing.");
+        }
+
+        if (StringUtils.isBlank(params.getPropertyTwo())) {
+            return Optional.of("Property Two is missing.");
+        }
+
+        if (StringUtils.isBlank(params.getPropertyTwoValue())) {
+            return Optional.of("Property Two Value is missing.");
+        }
+
+        if (StringUtils.isBlank(params.getSaveParam())) {
+            return Optional.of("Save parameter is missing.");
+        }
+
+        log.info("Validation successful.");
+        return Optional.empty();
     }
 }
-
