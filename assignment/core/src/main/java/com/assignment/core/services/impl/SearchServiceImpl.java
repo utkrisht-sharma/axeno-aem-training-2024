@@ -39,6 +39,8 @@ public class SearchServiceImpl implements SearchService {
     @Reference
     private ResourceResolverFactory resourceResolverFactory;
 
+
+
     /**
      * Searches for pages based on the provided parameters.
      *
@@ -47,7 +49,6 @@ public class SearchServiceImpl implements SearchService {
      * @throws LoginException If there is an issue with obtaining the ResourceResolver.
      * @throws RepositoryException If there is an issue with the JCR repository.
      */
-    @Override
     public Pair<List<String>, Integer> searchPages(RequestParameters params) throws LoginException, RepositoryException {
         List<String> resultPaths = new ArrayList<>();
         int totalMatches = 0;
@@ -55,32 +56,33 @@ public class SearchServiceImpl implements SearchService {
         try (ResourceResolver resourceResolver = resourceResolverFactory.getServiceResourceResolver(createServiceUserMap())) {
             log.info("Starting search for pages...");
 
-            // Query for total matches
-            Map<String, String> totalQueryMap = createQueryMap(params);
-            totalQueryMap.put("p.limit", "0");
+            // Create the query map
+            Map<String, String> queryMap = createQueryMap(params);
 
-            Query totalQuery = queryBuilder.createQuery(PredicateGroup.create(totalQueryMap), resourceResolver.adaptTo(Session.class));
-            totalQuery.setHitsPerPage(0);
-            SearchResult totalSearchResult = totalQuery.getResult();
-            totalMatches = totalSearchResult.getHits().size();
-            log.info("Total matches found: {}", totalMatches);
-
-            // Query for top 10 results
-            Map<String, String> queryMap = new HashMap<>(totalQueryMap);
-            queryMap.put("orderby", "@jcr:content/cq:lastModified");
-            queryMap.put("orderby.sort", "desc");
-            queryMap.put("p.limit", "10");
-
+            // Execute the query
             Query query = queryBuilder.createQuery(PredicateGroup.create(queryMap), resourceResolver.adaptTo(Session.class));
             SearchResult searchResult = query.getResult();
 
+            // Process all results
+            totalMatches = searchResult.getHits().size();
+            log.info("Total matches found: {}", totalMatches);
+
+            // only the first 10 results
             for (Hit hit : searchResult.getHits()) {
-                resultPaths.add(hit.getPath());
-                log.info("Found result: {}", hit.getPath());
+                if (resultPaths.size() < 10) {
+                    resultPaths.add(hit.getPath());
+                    log.info("Found result: {}", hit.getPath());
+                } else {
+                    break;
+                }
             }
         }
+
         return Pair.of(resultPaths, totalMatches);
     }
+
+
+
 
     /**
      * Creates a map of query parameters based on the provided request parameters.
@@ -99,6 +101,9 @@ public class SearchServiceImpl implements SearchService {
         queryMap.put("3_daterange.property", "jcr:content/cq:lastModified");
         queryMap.put("3_daterange.lowerBound", "2018-01-01T00:00:00.000Z");
         queryMap.put("3_daterange.upperBound", "2020-12-31T23:59:59.999Z");
+        queryMap.put("orderby", "@jcr:content/cq:lastModified");
+        queryMap.put("orderby.sort", "desc");
+        queryMap.put("p.limit", "-1");
         return queryMap;
     }
 
