@@ -1,0 +1,7 @@
+{
+  "schedulerName" : "Node Delete Scheduler",
+  "enabled": "true",
+  "cronExpression" : "0 0/1 * * * ?",
+  "nodePath" : "/content/assignment/main-pages"
+
+}
