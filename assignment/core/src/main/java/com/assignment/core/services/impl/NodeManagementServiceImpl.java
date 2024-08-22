@@ -52,10 +52,9 @@ public class NodeManagementServiceImpl implements NodeManagementService {
             }
         } catch (PersistenceException e) {
             LOG.error("Error persisting changes: {}", e.getMessage());
-            throw new PersistenceException("Failed to persist changes: " + e.getMessage(), e);
         } catch (RepositoryException e) {
             LOG.error("Repository error: {}", e.getMessage());
-            throw new RepositoryException("Repository operation failed: " + e.getMessage(), e);
+
         }
     }
 
@@ -77,7 +76,7 @@ public class NodeManagementServiceImpl implements NodeManagementService {
             }
         } catch (PersistenceException e) {
             LOG.error("Error persisting changes while deleting nodes: {}", e.getMessage());
-            throw new PersistenceException("Failed to delete session nodes: " + e.getMessage(), e);
+
         }
     }
 }

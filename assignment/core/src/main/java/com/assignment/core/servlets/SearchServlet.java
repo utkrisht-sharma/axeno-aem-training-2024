@@ -2,11 +2,13 @@ package com.assignment.core.servlets;
 
 import com.assignment.core.services.NodeManagementService;
 import com.assignment.core.services.SearchService;
+import com.assignment.core.services.ValidationService;
 import com.day.cq.wcm.api.WCMException;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.api.servlets.ServletResolverConstants;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.service.component.annotations.Component;
@@ -29,6 +31,9 @@ import java.util.Map;
         service = Servlet.class,
         immediate = true,
         property = {
+                ServletResolverConstants.SLING_SERVLET_PATHS + "=/bin/search",
+                ServletResolverConstants.SLING_SERVLET_METHODS + "=POST",
+
                 "sling.servlet.methods=POST",
                 "sling.servlet.paths=/bin/search"
         }
@@ -41,10 +46,42 @@ public class SearchServlet extends SlingAllMethodsServlet {
     private SearchService searchService;
 
     @Reference
+    private ValidationService validationService;
+
+    @Reference
     private NodeManagementService nodeManagementService;
 
     @Reference
     private ResourceResolverFactory resourceResolverFactory;
+    /**
+     * The parameter name for the path in the request.
+     */
+    private static final String PARAM_PATH = "path";
+
+    /**
+     * The parameter name for the first property in the request.
+     */
+    private static final String PARAM_PROPERTY_ONE = "propertyOne";
+
+    /**
+     * The parameter name for the value of the first property in the request.
+     */
+    private static final String PARAM_PROPERTY_ONE_VALUE = "propertyOneValue";
+
+    /**
+     * The parameter name for the second property in the request.
+     */
+    private static final String PARAM_PROPERTY_TWO = "propertyTwo";
+
+    /**
+     * The parameter name for the value of the second property in the request.
+     */
+    private static final String PARAM_PROPERTY_TWO_VALUE = "propertyTwoValue";
+
+    /**
+     * The parameter name for the save flag in the request.
+     */
+    private static final String PARAM_SAVE = "save";
 
     /**
      * Handles POST requests for searching pages and managing session nodes.
@@ -57,17 +94,17 @@ public class SearchServlet extends SlingAllMethodsServlet {
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws IOException {
 
-        String path = request.getParameter("path");
-        String propertyOne = request.getParameter("propertyOne");
-        String propertyOneValue = request.getParameter("propertyOneValue");
-        String propertyTwo = request.getParameter("propertyTwo");
-        String propertyTwoValue = request.getParameter("propertyTwoValue");
-        boolean save = Boolean.parseBoolean(request.getParameter("save"));
+        String path = request.getParameter(PARAM_PATH);
+        String propertyOne = request.getParameter(PARAM_PROPERTY_ONE);
+        String propertyOneValue = request.getParameter(PARAM_PROPERTY_ONE_VALUE);
+        String propertyTwo = request.getParameter(PARAM_PROPERTY_TWO);
+        String propertyTwoValue = request.getParameter(PARAM_PROPERTY_TWO_VALUE);
+        boolean save = Boolean.parseBoolean(request.getParameter(PARAM_SAVE));
 
-        if (isNullOrEmpty(path) || isNullOrEmpty(propertyOne) || isNullOrEmpty(propertyOneValue) ||
-                isNullOrEmpty(propertyTwo) || isNullOrEmpty(propertyTwoValue)) {
+        String validationError = validationService.validateParameters(path, propertyOne, propertyOneValue, propertyTwo, propertyTwoValue);
+        if (validationError != null) {
             response.setStatus(SlingHttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("All parameters are required.");
+            response.getWriter().write(validationError);
             return;
         }
 
@@ -87,7 +124,8 @@ public class SearchServlet extends SlingAllMethodsServlet {
             response.getWriter().write(createJsonResponse(topPages, totalMatches));
 
         } catch (RepositoryException e) {
-            LOG.error("Error in SearchServlet", e);
+            LOG.error(String.format("Error in SearchServlet: %s", e.getMessage()), e);
+
             response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("An error occurred: " + e.getMessage());
         }
@@ -120,4 +158,5 @@ public class SearchServlet extends SlingAllMethodsServlet {
         json.append("]}");
         return json.toString();
     }
+
 }
