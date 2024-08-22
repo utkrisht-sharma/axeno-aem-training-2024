@@ -2,10 +2,7 @@ package com.assignment.core.services.Impl;
 
 import com.assignment.core.config.NodeDeletionConfig;
 import com.assignment.core.services.NodeDeletionService;
-import org.apache.sling.api.resource.LoginException;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.api.resource.*;
 import org.apache.sling.commons.scheduler.ScheduleOptions;
 import org.apache.sling.commons.scheduler.Scheduler;
 import org.osgi.service.component.annotations.Activate;
@@ -15,6 +12,8 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.metatype.annotations.Designate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.RepositoryException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -93,17 +92,25 @@ public class NodeDeletionServiceImpl implements Runnable, NodeDeletionService {
             Resource rootResource = resourceResolver.getResource(rootPath);
             if (rootResource != null) {
                 for (Resource child : rootResource.getChildren()) {
-                    resourceResolver.delete(child);
-                    resourceResolver.commit();
-                    log.info("Deleted node: {}", child.getPath());
+                    try {
+                        resourceResolver.delete(child);
+                        log.info("Marked for deletion: {}", child.getPath());
+                    } catch (PersistenceException e) {
+                        log.error("Failed to mark node for deletion: {}", child.getPath(), e);
+                    }
                 }
+                resourceResolver.commit();
+                log.info("Deletion committed successfully.");
             } else {
                 log.warn("Root path not found: {}", rootPath);
             }
+        } catch (PersistenceException e) {
+            log.error("Persistence error occurred while deleting nodes under path: {}", rootPath, e);
         } catch (Exception e) {
-            log.error("Error occurred while deleting nodes under path: {}", rootPath, e);
+            log.error("Unexpected error occurred while deleting nodes under path: {}", rootPath, e);
         }
     }
+
 
     /**
      * Provides a  ResourceResolver for the node deletion service.
