@@ -1,5 +1,6 @@
 package com.assignment.core.servlets;
 
+import com.assignment.core.constants.RequestParameterConstants;
 import com.assignment.core.models.RequestParameters;
 import org.apache.sling.api.resource.*;
 import com.assignment.core.services.NodeService;
@@ -58,12 +59,13 @@ public class PageSearchServlet extends SlingAllMethodsServlet {
             throws IOException, ServletException {
         // Extract parameters from the request
         RequestParameters params = new RequestParameters(
-                request.getParameter("path"),
-                request.getParameter("propertyOne"),
-                request.getParameter("propertyOneValue"),
-                request.getParameter("propertyTwo"),
-                request.getParameter("propertyTwoValue"),
-                request.getParameter("save")
+
+                request.getParameter(RequestParameterConstants.PARAM_PATH),
+                request.getParameter(RequestParameterConstants.PARAM_PROPERTY_ONE),
+                request.getParameter(RequestParameterConstants.PARAM_PROPERTY_ONE_VALUE),
+                request.getParameter(RequestParameterConstants.PARAM_PROPERTY_TWO),
+                request.getParameter(RequestParameterConstants.PARAM_PROPERTY_TWO_VALUE),
+                request.getParameter(RequestParameterConstants.PARAM_SAVE)
         );
 
         // Validate Parameters
