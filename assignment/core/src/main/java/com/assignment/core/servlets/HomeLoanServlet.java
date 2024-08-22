@@ -26,6 +26,8 @@ import org.json.JSONObject;
  * eligible.
  * </p>
  */
+
+
 @Component(service = {Servlet.class},immediate = true,
         property = {
                 "sling.servlet.resourceTypes=assignment/components/homeloan",
@@ -51,6 +53,56 @@ public class HomeLoanServlet extends SlingAllMethodsServlet {
      */
     @Reference
     private HomeLoanService homeLoanService;
+    /**
+     * The parameter name for the client's name.
+     */
+    private static final String PARAM_CLIENT_NAME = "clientName";
+
+    /**
+     * The parameter name for the client's income.
+     */
+    private static final String PARAM_CLIENT_INCOME = "clientIncome";
+
+    /**
+     * The parameter name for the loan amount.
+     */
+    private static final String PARAM_LOAN_AMOUNT = "loanAmount";
+
+    /**
+     * The parameter name for the loan term.
+     */
+    private static final String PARAM_LOAN_TERM = "loanTerm";
+
+    /**
+     * The parameter name for the client's existing EMIs.
+     */
+    private static final String PARAM_EXISTING_EMIS = "existingEMIs";
+
+    /**
+     * The parameter name for the loan interest rate.
+     */
+    private static final String PARAM_INTEREST_RATE = "interestRate";
+
+    /**
+     * The JSON key for the response status.
+     */
+    private static final String JSON_KEY_STATUS = "status";
+
+    /**
+     * The JSON key for the response message.
+     */
+    private static final String JSON_KEY_MESSAGE = "message";
+
+    /**
+     * The JSON key for indicating loan eligibility.
+     */
+    private static final String JSON_KEY_ELIGIBLE = "eligible";
+
+    /**
+     * The JSON key for the calculated EMI value.
+     */
+    private static final String JSON_KEY_EMI = "emi";
+
 
     /**
      * Handles POST requests for loan applications.
@@ -68,25 +120,53 @@ public class HomeLoanServlet extends SlingAllMethodsServlet {
      * @throws IOException      If an I/O error occurs while writing the
      *                          response.
      */
+
+
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
 
-        String clientName = request.getParameter("clientName");
-        Double clientIncome = parseDouble(request.getParameter("clientIncome"));
-        Double loanAmount = parseDouble(request.getParameter("loanAmount"));
-        Integer loanTerm = parseInt(request.getParameter("loanTerm"));
-        Double existingEMIs = parseDouble(request.getParameter("existingEMIs"));
-        Double interestRate = parseDouble(request.getParameter("interestRate"));
+
+
+        String clientName = request.getParameter(PARAM_CLIENT_NAME);
+        Double clientIncome = parseDouble(request.getParameter(PARAM_CLIENT_INCOME));
+        Double loanAmount = parseDouble(request.getParameter(PARAM_LOAN_AMOUNT));
+        Integer loanTerm = parseInt(request.getParameter(PARAM_LOAN_TERM));
+        Double existingEMIs = parseDouble(request.getParameter(PARAM_EXISTING_EMIS));
+        Double interestRate = parseDouble(request.getParameter(PARAM_INTEREST_RATE));
 
         try {
-            if (clientName == null || clientName.isEmpty() || clientIncome == null || loanAmount == null
-                    || loanTerm == null || loanTerm <= 0 || existingEMIs == null || interestRate == null
-                    || clientIncome < 0 || loanAmount < 0 || existingEMIs < 0) {
-                sendErrorResponse(response, "Invalid input parameters.");
+            if (clientName == null || clientName.isEmpty()) {
+                sendErrorResponse(response, "Client name is missing or empty.");
                 return;
             }
+
+            if (clientIncome == null || clientIncome < 0) {
+                sendErrorResponse(response, "Client income is missing or invalid.");
+                return;
+            }
+
+            if (loanAmount == null || loanAmount < 0) {
+                sendErrorResponse(response, "Loan amount is missing or invalid.");
+                return;
+            }
+
+            if (loanTerm == null || loanTerm <= 0) {
+                sendErrorResponse(response, "Loan term is missing or invalid.");
+                return;
+            }
+
+            if (existingEMIs == null || existingEMIs < 0) {
+                sendErrorResponse(response, "Existing EMIs are missing or invalid.");
+                return;
+            }
+
+            if (interestRate == null) {
+                sendErrorResponse(response, "Interest rate is missing.");
+                return;
+            }
+
 
             LOG.info("Processing loan application for: {}", clientName);
 
@@ -99,7 +179,7 @@ public class HomeLoanServlet extends SlingAllMethodsServlet {
                 sendRejectionResponse(response, clientName);
             }
         } catch (IOException e) {
-            LOG.error("I/O error occurred while processing the loan application", e);
+            LOG.error("I/O error occurred while processing the loan application Error: {}", e.getMessage(), e);
             sendErrorResponse(response, "An error occurred while processing your request. Please try again later.");
         }
     }
@@ -134,8 +214,8 @@ public class HomeLoanServlet extends SlingAllMethodsServlet {
      * @throws IOException If an I/O error occurs while writing the response.
      */
     private void sendErrorResponse(SlingHttpServletResponse response, String message) throws IOException {
-        jsonResponse.put("status", "Error");
-        jsonResponse.put("message", message);
+        jsonResponse.put(JSON_KEY_STATUS, "Error");
+        jsonResponse.put(JSON_KEY_MESSAGE, message);
         response.getWriter().write(jsonResponse.toString());
     }
 
@@ -149,10 +229,10 @@ public class HomeLoanServlet extends SlingAllMethodsServlet {
      * @throws IOException If an I/O error occurs while writing the response.
      */
     private void sendSuccessResponse(SlingHttpServletResponse response, String clientName, Double emi) throws IOException {
-        jsonResponse.put("clientName", clientName);
-        jsonResponse.put("eligible", true);
-        jsonResponse.put("emi", String.format("%.2f", emi)); // Ensuring the EMI is formatted to 2 decimal places
-        jsonResponse.put("message", "Loan Approved");
+        jsonResponse.put(PARAM_CLIENT_NAME, clientName);
+        jsonResponse.put(JSON_KEY_ELIGIBLE, true);
+        jsonResponse.put(JSON_KEY_EMI, String.format("%.2f", emi));
+        jsonResponse.put(JSON_KEY_MESSAGE, "Loan Approved");
         response.getWriter().write(jsonResponse.toString());
     }
 
@@ -164,10 +244,11 @@ public class HomeLoanServlet extends SlingAllMethodsServlet {
      * @throws IOException If an I/O error occurs while writing the response.
      */
     private void sendRejectionResponse(SlingHttpServletResponse response, String clientName) throws IOException {
-        jsonResponse.put("clientName", clientName);
-        jsonResponse.put("eligible", false);
-        jsonResponse.put("emi", "N/A");
-        jsonResponse.put("message", "Loan Rejected");
+        jsonResponse.put(PARAM_CLIENT_NAME, clientName);
+        jsonResponse.put(JSON_KEY_ELIGIBLE, false);
+        jsonResponse.put(JSON_KEY_EMI, "N/A");
+        jsonResponse.put(JSON_KEY_MESSAGE, "Loan Rejected");
         response.getWriter().write(jsonResponse.toString());
+
     }
 }
