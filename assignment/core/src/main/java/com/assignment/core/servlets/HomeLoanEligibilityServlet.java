@@ -1,5 +1,7 @@
 package com.assignment.core.servlets;
 
+import com.assignment.core.constants.RequestParamConstants;
+import com.assignment.core.constants.ResponseConstants;
 import com.assignment.core.services.EMICalculationService;
 import com.assignment.core.services.LoanEligibilityService;
 import com.assignment.core.services.ValidationService;
@@ -59,12 +61,12 @@ public class HomeLoanEligibilityServlet extends SlingAllMethodsServlet {
 
         try {
             // Fetch parameters from the request
-            String clientName = request.getParameter("clientName");
-            String clientIncome = request.getParameter("clientIncome");
-            String loanAmount = request.getParameter("loanAmount");
-            String loanTerm = request.getParameter("loanTerm");
-            String existingEMIs = request.getParameter("existingEMIs");
-            String interestRate = request.getParameter("interestRate");
+            String clientName = request.getParameter( RequestParamConstants.PARAM_CLIENT_NAME);
+            String clientIncome = request.getParameter(RequestParamConstants.PARAM_CLIENT_INCOME);
+            String loanAmount = request.getParameter(RequestParamConstants.PARAM_LOAN_AMOUNT);
+            String loanTerm = request.getParameter(RequestParamConstants.PARAM_LOAN_TERM);
+            String existingEMIs = request.getParameter(RequestParamConstants.PARAM_EXISTING_EMIS);
+            String interestRate = request.getParameter(RequestParamConstants.PARAM_INTEREST_RATE);
 
             // Validate parameters
             Optional<String> errorMessage = validateParameters(clientName, clientIncome, loanAmount, loanTerm, existingEMIs, interestRate);
@@ -88,10 +90,10 @@ public class HomeLoanEligibilityServlet extends SlingAllMethodsServlet {
 
             // Calculate EMI
             double emi = emiCalculationService.calculateEMI(loanAmountValue, interestRateValue, loanTermValue);
-            jsonResponse.addProperty("clientName", clientName);
-            jsonResponse.addProperty("eligible", isEligible);
-            jsonResponse.addProperty("emi", isEligible ? String.format("%.2f", emi) : "N/A");
-            jsonResponse.addProperty("message", "Loan Approved");
+            jsonResponse.addProperty(ResponseConstants.CLIENT_NAME, clientName);
+            jsonResponse.addProperty(ResponseConstants.ELIGIBLE, isEligible);
+            jsonResponse.addProperty(ResponseConstants.EMI, isEligible ? String.format("%.2f", emi) : "N/A");
+            jsonResponse.addProperty(ResponseConstants.MESSAGE, "Loan Approved");
 
             response.getWriter().write(jsonResponse.toString());
 
