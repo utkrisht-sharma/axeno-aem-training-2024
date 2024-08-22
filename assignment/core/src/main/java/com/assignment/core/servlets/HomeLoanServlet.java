@@ -4,6 +4,7 @@ import com.assignment.core.models.HomeLoan;
 import com.assignment.core.services.HomeLoanService;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.servlets.ServletResolverConstants;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -30,9 +31,9 @@ import org.json.JSONObject;
 
 @Component(service = {Servlet.class},immediate = true,
         property = {
-                "sling.servlet.resourceTypes=assignment/components/homeloan",
-                "sling.servlet.methods=POST",
-                "sling.servlet.extensions=json"
+                ServletResolverConstants.SLING_SERVLET_RESOURCE_TYPES + "=assignment/components/homeloan",
+                ServletResolverConstants.SLING_SERVLET_METHODS + "=POST",
+                ServletResolverConstants.SLING_SERVLET_EXTENSIONS + "=json"
         })
 public class HomeLoanServlet extends SlingAllMethodsServlet {
 
