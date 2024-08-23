@@ -127,8 +127,7 @@ public class CSVPageCreationWorkflowProcess implements WorkflowProcess {
      *
      */
     private String createValidPageName(String title) {
-        String validName = title.replaceAll("[^\\p{Alnum}_]", "-");
-        return validName.length() > 50 ? validName.substring(0, 50) : validName;
+        return title.replaceAll("[^\\p{Alnum}_]", "-");
     }
 
     /**
