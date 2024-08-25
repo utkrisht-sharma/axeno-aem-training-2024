@@ -1,0 +1,12 @@
+<sly data-sly-use.breadcrumb="com.assignment.core.models.BreadcrumbModel">
+    <nav aria-label="Breadcrumb">
+        <ul class="breadcrumb">
+            <li data-sly-list.item="${breadcrumb.breadcrumbs}">
+                <a href="${item.path}.html">${item.title}</a>
+                <sly data-sly-test="${!itemList.last}">
+                    <span> / </span>
+                </sly>
+            </li>
+        </ul>
+    </nav>
+</sly>
