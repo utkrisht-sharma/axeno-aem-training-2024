@@ -9,7 +9,6 @@ import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Self;
 import org.apache.sling.models.annotations.SlingObject;
 
-
 import java.util.LinkedList;
 import java.util.List;
 
