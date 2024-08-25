@@ -1,0 +1,11 @@
+<sly data-sly-use.breadcrumb="com.assignment.core.models.BreadcrumbModel">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <sly data-sly-list.segment="${breadcrumb.navigationPath}">
+                <li class="breadcrumb-item">
+                    ${segment.name}
+                </li>
+            </sly>
+        </ol>
+    </nav>
+</sly>
