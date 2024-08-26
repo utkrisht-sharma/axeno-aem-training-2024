@@ -1,5 +1,6 @@
 package com.assignment.core.servlets;
 
+import com.day.cq.replication.Replicator;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.api.security.JackrabbitAccessControlList;
 import org.apache.jackrabbit.api.security.principal.PrincipalManager;
@@ -111,16 +112,16 @@ public class CreateAssignmentUserGroupServlet extends SlingSafeMethodsServlet {
 
             // Adding ACL Permission to the Group for Specific Paths
             logger.debug("Assigning permissions to group {} for various paths.", groupID);
-            assignGroupPermissions(session, accessControlManager, groupID, "/content/wknd/us/en/magazine", Privilege.JCR_READ, Privilege.JCR_WRITE);
-            assignGroupPermissions(session, accessControlManager, groupID, "/content/wknd/ca/en/magazine", Privilege.JCR_READ, Privilege.JCR_WRITE);
-            assignGroupPermissions(session, accessControlManager, groupID, "/content/experience-fragments/wknd/us/en/featured", Privilege.JCR_READ, Privilege.JCR_WRITE);
-            assignGroupPermissions(session, accessControlManager, groupID, "/content/experience-fragments/wknd/ca/en/featured", Privilege.JCR_READ, Privilege.JCR_WRITE);
-            assignGroupPermissions(session, accessControlManager, groupID, "/content/cq:tags/wknd-shared/region/apac", Privilege.JCR_READ, Privilege.JCR_WRITE);
-            assignGroupPermissions(session, accessControlManager, groupID, "/content/cq:tags/wknd-shared/activity", Privilege.JCR_READ, Privilege.JCR_WRITE);
-            assignGroupPermissions(session, accessControlManager, groupID, "/content/dam/wknd-shared/en/activities/cycling", Privilege.JCR_READ, Privilege.JCR_WRITE);
-            assignGroupPermissions(session, accessControlManager, groupID, "/content/dam/wknd-shared/en/magazine/skitouring", Privilege.JCR_READ, Privilege.JCR_WRITE);
-            assignGroupPermissions(session, accessControlManager, groupID, "/conf/wknd-shared/settings/dam/cfm/models/article", Privilege.JCR_READ, Privilege.JCR_WRITE);
-            assignGroupPermissions(session, accessControlManager, groupID, "/conf/wknd-shared/settings/dam/cfm/models/adventure", Privilege.JCR_READ, Privilege.JCR_WRITE);
+            assignGroupPermissions(session, accessControlManager, groupID, "/content/wknd/us/en/magazine", Privilege.JCR_READ, Privilege.JCR_WRITE, Replicator.REPLICATE_PRIVILEGE);
+            assignGroupPermissions(session, accessControlManager, groupID, "/content/wknd/ca/en/magazine", Privilege.JCR_READ, Privilege.JCR_WRITE,Replicator.REPLICATE_PRIVILEGE);
+            assignGroupPermissions(session, accessControlManager, groupID, "/content/experience-fragments/wknd/us/en/featured", Privilege.JCR_READ, Privilege.JCR_WRITE,Replicator.REPLICATE_PRIVILEGE);
+            assignGroupPermissions(session, accessControlManager, groupID, "/content/experience-fragments/wknd/ca/en/featured", Privilege.JCR_READ, Privilege.JCR_WRITE,Replicator.REPLICATE_PRIVILEGE);
+            assignGroupPermissions(session, accessControlManager, groupID, "/content/cq:tags/wknd-shared/region/apac", Privilege.JCR_READ, Privilege.JCR_WRITE,Replicator.REPLICATE_PRIVILEGE);
+            assignGroupPermissions(session, accessControlManager, groupID, "/content/cq:tags/wknd-shared/activity", Privilege.JCR_READ, Privilege.JCR_WRITE,Replicator.REPLICATE_PRIVILEGE);
+            assignGroupPermissions(session, accessControlManager, groupID, "/content/dam/wknd-shared/en/activities/cycling", Privilege.JCR_READ, Privilege.JCR_WRITE,Replicator.REPLICATE_PRIVILEGE);
+            assignGroupPermissions(session, accessControlManager, groupID, "/content/dam/wknd-shared/en/magazine/skitouring", Privilege.JCR_READ, Privilege.JCR_WRITE,Replicator.REPLICATE_PRIVILEGE);
+            assignGroupPermissions(session, accessControlManager, groupID, "/conf/wknd-shared/settings/dam/cfm/models/article", Privilege.JCR_READ, Privilege.JCR_WRITE,Replicator.REPLICATE_PRIVILEGE);
+            assignGroupPermissions(session, accessControlManager, groupID, "/conf/wknd-shared/settings/dam/cfm/models/adventure", Privilege.JCR_READ, Privilege.JCR_WRITE,Replicator.REPLICATE_PRIVILEGE);
 
             logger.debug("Logging out session.");
             session.logout();
