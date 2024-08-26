@@ -16,6 +16,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -52,10 +53,8 @@ public class PageCreationProcess implements WorkflowProcess {
                 LOG.error("ResourceResolver is null");
                 return;
             }
-
             String payloadPath = getPayloadPath(workItem);
             Asset asset = getAsset(payloadPath, resolver);
-
             if (asset != null) {
                 processCSVFile(asset, resolver);
             }
@@ -89,14 +88,12 @@ public class PageCreationProcess implements WorkflowProcess {
             LOG.error("AssetManager is null");
             return null;
         }
-
         Asset asset = assetManager.getAsset(path);
         if (asset == null) {
             LOG.error("Asset not found at path: {}", path);
         } else {
             LOG.info("Asset found: {}", asset.getPath());
         }
-
         return asset;
     }
 
@@ -113,6 +110,8 @@ public class PageCreationProcess implements WorkflowProcess {
                     pageCreationService.createPages(csvDataList, resolver);
                 }
             }
+        }catch (IOException e) {
+            LOG.error("IO Error during workflow execution", e);
         } catch (Exception e) {
             LOG.error("Error processing CSV file", e);
         }
@@ -130,5 +129,4 @@ public class PageCreationProcess implements WorkflowProcess {
         }
         return original;
     }
-
 }

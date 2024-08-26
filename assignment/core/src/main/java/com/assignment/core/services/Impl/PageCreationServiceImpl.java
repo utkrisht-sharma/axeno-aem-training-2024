@@ -3,18 +3,20 @@ package com.assignment.core.services.Impl;
 import com.assignment.core.services.PageCreationService;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
+import com.day.cq.wcm.api.WCMException;
+import org.apache.sling.api.resource.ModifiableValueMap;
+import org.apache.sling.api.resource.PersistenceException;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.jcr.Node;
+
+import javax.jcr.RepositoryException;
 import java.util.List;
 
 /**
  * Implementation of the PageCreationService interface for creating pages in a content repository.
- * This service implementation handles the creation of multiple pages from a list of CSV data.
- * It utilizes the  PageManager for page creation and  ResourceResolver for
- * repository interactions.
  */
 @Component(service = PageCreationService.class)
 public class PageCreationServiceImpl implements PageCreationService {
@@ -32,7 +34,7 @@ public class PageCreationServiceImpl implements PageCreationService {
             return;
         }
         for (String[] csvData : csvDataList) {
-            createPage(pageManager, csvData);
+            createPage(pageManager, csvData, resolver);
         }
     }
 
@@ -40,7 +42,7 @@ public class PageCreationServiceImpl implements PageCreationService {
      * Creates a single page based on the provided CSV data.
      */
     @Override
-    public void createPage(PageManager pageManager, String[] csvData) {
+    public void createPage(PageManager pageManager, String[] csvData, ResourceResolver resolver) {
         try {
             String title = csvData[0].trim();
             String path = csvData[1].trim();
@@ -48,35 +50,44 @@ public class PageCreationServiceImpl implements PageCreationService {
             String[] tags = csvData[3].trim().split("\\|");
             String thumbnail = csvData[4].trim();
             String pageName = generateValidName(title);
-            Page page = pageManager.create(path, pageName, "/conf/global/settings/wcm/templates/page", title);
+            String templatePath="/conf/global/settings/wcm/templates/page";
+            Page page = pageManager.create(path, pageName, templatePath, title);
 
             if (page != null) {
                 LOG.info("Page created successfully: {}/{}", path, title);
-                setPageProperties(page, description, tags, thumbnail);
+                setPageProperties(page, description, tags, thumbnail, resolver);
             } else {
                 LOG.warn("Page creation failed for title: {}", title);
             }
-        } catch (Exception e) {
-            LOG.error("Error creating page", e);
+        }catch(WCMException e){
+            LOG.error("WCMException occurred while creating page: {}",e);
+        }catch (Exception e) {
+            LOG.error("Unexpected error while creating page: {}", e.getMessage(), e);
         }
     }
 
     /**
-     * Sets properties for the created page.
+     * Sets properties for the created page using the Resource API.
      */
-    private void setPageProperties(Page page, String description, String[] tags, String thumbnail) {
-        try {
-            Node pageContentNode = page.getContentResource().adaptTo(Node.class);
-            if (pageContentNode != null) {
-                LOG.info("Setting properties for page: {}", page.getTitle());
-                pageContentNode.setProperty("jcr:description", description);
-                pageContentNode.setProperty("cq:tags", tags);
-                pageContentNode.setProperty("cq:thumbnail", thumbnail);
-            } else {
-                LOG.warn("Page content node is null for page: {}", page.getTitle());
+    private void setPageProperties(Page page, String description, String[] tags, String thumbnail, ResourceResolver resolver) {
+        Resource pageContentResource = page.getContentResource();
+        if (pageContentResource != null) {
+            try {
+                ModifiableValueMap properties = pageContentResource.adaptTo(ModifiableValueMap.class);
+                if (properties != null) {
+                    LOG.info("Setting properties for page: {}", page.getTitle());
+                    properties.put("jcr:description", description);
+                    properties.put("cq:tags", tags);
+                    properties.put("cq:thumbnail", thumbnail);
+                    resolver.commit();
+                } else {
+                    LOG.warn("ModifiableValueMap is null for page: {}", page.getTitle());
+                }
+            } catch (PersistenceException e) {
+                LOG.error("Error committing page properties: {}", e.getMessage(), e);
             }
-        } catch (Exception e) {
-            LOG.error("Error setting page properties", e);
+        } else {
+            LOG.warn("Page content resource is null for page: {}", page.getTitle());
         }
     }
 
@@ -87,5 +98,4 @@ public class PageCreationServiceImpl implements PageCreationService {
         String validName = title.replaceAll("[^\\p{Alnum}]", "-").toLowerCase();
         return validName.isEmpty() ? "default-page" : validName;
     }
-
 }

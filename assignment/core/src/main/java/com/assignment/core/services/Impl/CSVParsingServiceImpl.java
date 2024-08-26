@@ -5,6 +5,7 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,9 @@ public class CSVParsingServiceImpl implements CSVParsingService {
                     LOG.warn("Invalid CSV data: {}", String.join(",", csvData));
                 }
             }
-        } catch (Exception e) {
+        }catch (IOException e) {
+            LOG.error("I/O error occurred while reading the CSV file", e);
+        }catch (Exception e) {
             LOG.error("Error parsing CSV", e);
         }
         return parsedData;
