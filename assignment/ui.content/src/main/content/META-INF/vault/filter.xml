@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
     <filter root="/conf/assignment" mode="merge"/>
+    <filter root="/conf/global" mode="merge"/>
     <filter root="/content/assignment" mode="merge"/>
+    <filter root="/var/workflow/models" mode="merge"/>
     <filter root="/content/dam/assignment" mode="merge">
         <exclude pattern="/content/dam/assignment(/.*)?"/>
         <include pattern="/content/dam/assignment/jcr:content(/.*)?"/>

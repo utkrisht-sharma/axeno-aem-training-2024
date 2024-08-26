@@ -9,6 +9,8 @@ import com.adobe.granite.workflow.metadata.MetaDataMap;
 import com.assignment.core.PageMetaData.PageData;
 import com.assignment.core.service.PageCreationService;
 import com.day.cq.dam.api.Asset;
+import com.day.cq.wcm.api.WCMException;
+import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.service.component.annotations.Component;
@@ -41,7 +43,7 @@ public class PageCreationProcess implements WorkflowProcess {
      * Executes the workflow process to create pages based on the CSV file.
      */
     @Override
-    public void execute(WorkItem item, WorkflowSession workflowSession, MetaDataMap metaDataMap) throws WorkflowException {
+    public void execute(WorkItem item, WorkflowSession workflowSession, MetaDataMap metaDataMap) {
         log.info("Execution of execute method started");
         try (ResourceResolver resolver = workflowSession.adaptTo(ResourceResolver.class)) {
             String csvFilePath = item.getWorkflowData().getPayload().toString();
@@ -70,16 +72,22 @@ public class PageCreationProcess implements WorkflowProcess {
             } else {
                 log.error("CSV file not found");
             }
-        } catch (Exception e) {
-            throw new WorkflowException("Error executing workflow", e);
+        } catch (IOException exception) {
+            log.error("Exception Occurs While Performing File Operations. ");
+        } catch (WCMException exception) {
+            log.error(exception.getMessage());
+        } catch (Exception exception) {
+            log.error("Error Occured In Creating A Page From CSV");
         }
+
+
     }
 
     /**
      * Processes the CSV input stream and creates pages.
      */
     private List<PageData> processCSV(InputStream csvInputStream) throws IOException {
-        log.info("Process CSV Data in processCSV method");
+        log.info("Parsing CSV File. ");
         List<PageData> pages = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(csvInputStream, StandardCharsets.UTF_8))) {
             String line;
