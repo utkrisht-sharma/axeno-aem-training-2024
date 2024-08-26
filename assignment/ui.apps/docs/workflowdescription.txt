@@ -1,0 +1,23 @@
+Workflow Model: CSV Page Creation Process
+
+Description:
+This workflow model is designed to create pages in AEM based on data provided in a CSV file. The model includes a process step that utilizes the `PageCreationProcess` class to read the CSV file, extract the necessary details (title, path, description, tags, thumbnail), and create pages at the specified locations.
+
+Process Step:
+- PageCreationProcess: A custom workflow process that reads the CSV file and creates pages in AEM based on the data provided.
+
+Launcher Configuration:
+This workflow is automatically triggered using a workflow launcher. The launcher monitors the following path for CSV file uploads:
+
+- Monitored Path: /content/dam/assignment
+
+Trigger Condition:
+- The workflow is triggered immediately when a CSV file is uploaded to the `/content/dam/assignment` directory in the AEM DAM.
+
+Workflow Execution:
+- When the CSV file is uploaded, the workflow launcher automatically initiates the `CSV Page Creation Process` workflow model.
+- The workflow reads the CSV file and processes each row to create pages at the specified paths with the provided metadata.
+
+Outcome:
+- The pages are created according to the details specified in the CSV file, with all metadata (title, description, tags, and thumbnail) applied to each page as defined in the process.
+
