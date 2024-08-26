@@ -3,32 +3,34 @@ package com.assignment.core.servlets;
 import com.assignment.core.services.NodeService;
 import com.assignment.core.services.SearchService;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
-import org.apache.sling.api.servlets.ServletResolverConstants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.json.JSONObject;
+import org.apache.sling.api.servlets.HttpConstants;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.List;
+import org.apache.sling.api.servlets.ServletResolverConstants;
+
 
 /**
  * Servlet for handling page search requests and processing the results.
  * It performs a search based on parameters, handles saving or deleting nodes,
  * and responds with the search results in JSON format.
  */
-@Component(service = Servlet.class,
+@Component(
+        service = { Servlet.class },
         property = {
                 ServletResolverConstants.SLING_SERVLET_PATHS + "=/bin/pagesearch",
-                ServletResolverConstants.SLING_SERVLET_METHODS + "=POST"
-        })
+                ServletResolverConstants.SLING_SERVLET_METHODS + "=" + HttpConstants.METHOD_POST
+        }
+)
 public class PageSearchServlet extends SlingAllMethodsServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(PageSearchServlet.class);
@@ -63,19 +65,21 @@ public class PageSearchServlet extends SlingAllMethodsServlet {
 
         try (ResourceResolver resolver = request.getResourceResolver()) {
             // Step 1: Perform page search using the service
-            Pair<List<String>, Long> searchResults = searchService.executePageSearch(resolver, searchPath, propOne, propOneVal, propTwo, propTwoVal);
-            List<String> foundPaths = searchResults.getLeft();
-            long matchCount = searchResults.getRight();
+            JSONObject searchResults = searchService.executePageSearch(resolver, searchPath, propOne, propOneVal, propTwo, propTwoVal);
+            long matchCount = searchResults.getLong("totalMatches");
 
             // Step 2: Save or delete nodes using the service
             nodeService.processSaveOrDelete(resolver, saveFlag, matchCount);
 
-            // Respond with the results
+            // Respond with the search results
             response.setContentType("application/json");
-            response.getWriter().write("{\"topResults\":" + foundPaths + ", \"totalMatches\":" + matchCount + "}");
+            response.getWriter().write(searchResults.toString());
+        } catch (IOException e) {
+            logger.error("I/O error during request processing", e);
+            response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, "I/O error occurred");
         } catch (Exception e) {
-            logger.error("Request processing failed", e);
-            response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            logger.error("Error processing request", e);
+            response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error");
         }
     }
 }
