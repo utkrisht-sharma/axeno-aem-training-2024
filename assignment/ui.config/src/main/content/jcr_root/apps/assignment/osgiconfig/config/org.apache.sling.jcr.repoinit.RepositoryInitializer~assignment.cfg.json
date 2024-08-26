@@ -1,7 +1,12 @@
 {
-    "scripts": [
-        "create path (sling:OrderedFolder) /content/dam/assignment",
-        "create path (nt:unstructured) /content/dam/assignment/jcr:content",
-        "set properties on /content/dam/assignment/jcr:content\n  set cq:conf{String} to /conf/assignment\n  set jcr:title{String} to \"Assignment\"\nend"
-    ]
+  "scripts": [
+    "create path (sling:OrderedFolder) /content/dam/assignment",
+    "create path (nt:unstructured) /content/dam/assignment/jcr:content",
+    "set properties on /content/dam/assignment/jcr:content\n  set cq:conf{String} to /conf/assignment\n  set jcr:title{String} to \"Assignment\"\nend"
+  ],
+  "scripts": [
+    "create path (rep:AuthorizableFolder) /home/groups/user-group",
+    "create group AEM_ASSIGNMENT_USER_GROUP3 with path /home/groups/user-group",
+    "set ACL for AEM_ASSIGNMENT_USER_GROUP3\n  allow jcr:read,crx:replicate,rep:write on /content/wknd/us/en/magazine\n   allow jcr:read,crx:replicate,rep:write on /content/wknd/ca/en/magazine\n   allow jcr:read,crx:replicate,rep:write on /content/experience-fragments/wknd/us/en/featured\n   allow jcr:read,crx:replicate,rep:write on /content/experience-fragments/wknd/ca/en/featured\n   allow jcr:read,crx:replicate,rep:write on /content/cq:tags/wknd-shared/region/apac\n   allow jcr:read,crx:replicate,rep:write on /content/cq:tags/wknd-shared/activity\n   allow jcr:read,crx:replicate,rep:write on /content/dam/wknd-shared/en/activities/cycling\n   allow jcr:read,crx:replicate,rep:write on /content/dam/wknd-shared/en/magazine/skitouring\n  allow jcr:read,crx:replicate,rep:write on /conf/wknd-shared/settings/dam/cfm/models/article\n  allow jcr:read,crx:replicate,rep:write on /conf/wknd-shared/settings/dam/cfm/models/adventure\n  allow jcr:read on /libs\nend"
+  ]
 }
