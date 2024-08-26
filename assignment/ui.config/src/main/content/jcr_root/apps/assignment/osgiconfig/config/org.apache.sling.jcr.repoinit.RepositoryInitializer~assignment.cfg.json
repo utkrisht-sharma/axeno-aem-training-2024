@@ -2,6 +2,43 @@
     "scripts": [
         "create path (sling:OrderedFolder) /content/dam/assignment",
         "create path (nt:unstructured) /content/dam/assignment/jcr:content",
-        "set properties on /content/dam/assignment/jcr:content\n  set cq:conf{String} to /conf/assignment\n  set jcr:title{String} to \"Assignment\"\nend"
+        "set properties on /content/dam/assignment/jcr:content\n  set jcr:title{String} to \"Assignment\"\n  set cq:conf{String} to /conf/assignment\nend",
+
+        "create path (rep:AuthorizableFolder) /home/groups/user-group",
+        "create group AEM_ASSIGNMENT_USER_GROUP with path /home/groups/user-group",
+
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tallow jcr:read on /libs,/apps/wknd,/content\n\tdeny jcr:all on /content restriction(rep:globs,/assignment,/outbound-marketing,/campaigns)\nend",
+
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/wknd restriction(rep:globs,/*)\n\tallow jcr:read on /content/wknd restriction(rep:globs,/jcr:content,/us,/ca)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/wknd/ca restriction(rep:globs,/*)\n\tallow jcr:read on /content/wknd/ca restriction(rep:globs,/jcr:content,/en)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/wknd/us restriction(rep:globs,/*)\n\tallow jcr:read on /content/wknd/us restriction(rep:globs,/jcr:content,/en)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/wknd/ca/en restriction(rep:globs,/*)\n\tallow jcr:read,rep:write,crx:replicate on /content/wknd/ca/en restriction(rep:globs,/jcr:content,/magazine)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/wknd/us/en restriction(rep:globs,/*)\n\tallow jcr:read,rep:write,crx:replicate on /content/wknd/us/en restriction(rep:globs,/jcr:content,/magazine)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/wknd/us/en/magazine restriction(rep:globs,/*)\n\tallow jcr:read,rep:write,crx:replicate on /content/wknd/us/en/magazine restriction(rep:glob,/jcr:content)\nend",
+
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/experience-fragments restriction(rep:globs,/*)\n\tallow jcr:read on /content/experience-fragments restriction(rep:globs,/wknd)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/experience-fragments/wknd restriction(rep:globs,/*)\n\tallow jcr:read on /content/experience-fragments/wknd restriction(rep:globs,/us,/ca)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/experience-fragments/wknd/ca/en/featured restriction(rep:globs,/*)\n\tallow jcr:read,rep:write,crx:replicate on /content/experience-fragments/wknd/ca/en/featured restriction(rep:globs,/:jcr:content)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/experience-fragments/wknd/us/en restriction(rep:globs,/*)\n\tallow jcr:read,rep:write,crx:replicate on /content/experience-fragments/wknd/us/en restriction(rep:globs,/featured)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/experience-fragments/wknd/us/en/featured restriction(rep:globs,/*)\n\tallow jcr:read,rep:write,crx:replicate on /content/experience-fragments/wknd/us/en/featured restriction(rep:globs,/:jcr:content)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/experience-fragments/wknd/ca/en restriction(rep:globs,/*)\n\tallow jcr:read,rep:write,crx:replicate on /content/experience-fragments/wknd/ca/en restriction(rep:globs,/featured)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/experience-fragments/wknd/ca/en/featured restriction(rep:globs,/*)\n\tallow jcr:read,rep:write,crx:replicate on /content/experience-fragments/wknd/ca/en/featured restriction(rep:globs,/:jcr:content)\nend",
+
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/cq:tags restriction(rep:globs,/*)\n\tallow jcr:read on /content/cq:tags restriction(rep:globs,/wknd-shared)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/cq:tags/wknd-shared restriction(rep:globs,/*)\n\tallow jcr:read on /content/cq:tags/wknd-shared restriction(rep:globs,/activity,/region)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tallow jcr:read,rep:write,crx:replicate on /content/cq:tags/wknd-shared/activity\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/cq:tags/wknd-shared/activity restriction(rep:globs,/*)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/cq:tags/wknd-shared/region restriction(rep:globs,/*)\n\tallow jcr:read,rep:write,crx:replicate on /content/cq:tags/wknd-shared/region restriction(rep:globs,/apac)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/cq:tags/wknd-shared/region/apac restriction(rep:globs,/*)\nend",
+
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/dam restriction(rep:globs,/*)\n\tallow jcr:read on /content/dam restriction(rep:globs,/wknd-shared)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/dam/wknd-shared/en restriction(rep:globs,/*)\n\tallow jcr:read on /content/dam/wknd-shared/en restriction(rep:globs,/activities,/magazine)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/dam/wknd-shared/en/magazine restriction(rep:globs,/*)\n\tallow jcr:read on /content/dam/wknd-shared/en/magazine restriction(rep:globs,/jcr:content,/skitouring)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/dam/wknd-shared/en/activities restriction(rep:globs,/*)\n\tallow jcr:read on /content/dam/wknd-shared/en/activities restriction(rep:globs,/jcr:content,/cycling)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/dam/wknd-shared/en/activities/cycling restriction(rep:globs,/*)\n\tallow jcr:read,rep:write,crx:replicate on /content/dam/wknd-shared/en/activities/cycling restriction(rep:globs,/jcr:content)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /content/dam/wknd-shared/en/magazine/skitouring restriction(rep:globs,/*)\n\tallow jcr:read,rep:write,crx:replicate on /content/dam/wknd-shared/en/magazine/skitouring restriction(rep:globs,/jcr:content)\nend",
+
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /conf restriction(rep:globs,/*)\n\tallow jcr:read on /conf restriction(rep:globs,/wknd,/wknd-shared)\nend",
+        "set ACL for AEM_ASSIGNMENT_USER_GROUP\n\tdeny jcr:all on /conf/wknd-shared/settings/dam/cfm/models restriction(rep:globs,/*)\n\tallow jcr:read,rep:write,crx:replicate on /conf/wknd-shared/settings/dam/cfm/models restriction(rep:globs,/article/adventure)\nend"
     ]
 }
