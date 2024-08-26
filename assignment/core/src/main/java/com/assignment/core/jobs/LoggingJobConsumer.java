@@ -29,8 +29,15 @@ public class LoggingJobConsumer implements JobConsumer {
      */
     @Override
     public JobResult process(Job job) {
-        LOG.info("Executing Sling Job with ID: {}", job.getId());
-        LOG.info("Job Topic: {}", job.getTopic());
-        return JobResult.OK;
+        try {
+            LOG.info("Executing Sling Job with ID: {}", job.getId());
+            LOG.info("Job Topic: {}", job.getTopic());
+            String property = (String) job.getProperty("job");
+            LOG.info("property of job : {}", property);
+            return JobResult.OK;
+        }catch (Exception e){
+            LOG.error("Exception occured while calling logging job : {}", e.getMessage());
+            return JobResult.FAILED;
+        }
     }
 }

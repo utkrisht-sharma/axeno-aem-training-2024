@@ -1,4 +1,4 @@
-package com.assignment.core.services.impl;
+package com.assignment.core.services;
 
 /**
  * Service interface for triggering jobs.

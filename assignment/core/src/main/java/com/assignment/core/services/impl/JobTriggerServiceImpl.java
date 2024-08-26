@@ -1,6 +1,7 @@
-package com.assignment.core.services;
+package com.assignment.core.services.impl;
 
-import com.assignment.core.services.impl.JobTriggerService;
+import com.adobe.xfa.Obj;
+import com.assignment.core.services.JobTriggerService;
 import org.apache.sling.event.jobs.JobBuilder;
 import org.apache.sling.event.jobs.JobManager;
 import org.osgi.service.component.annotations.Activate;
@@ -29,7 +30,8 @@ public class JobTriggerServiceImpl implements JobTriggerService {
     @Activate
     public void trigger() {
         LOG.info("Triggering Sling Job...");
-        JobBuilder jobBuilder = jobManager.createJob("job/logging");
-        jobBuilder.add();
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("job","periodic logging job");
+        jobManager.addJob("job/logging",properties);
     }
 }

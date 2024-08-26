@@ -1,6 +1,6 @@
 package com.assignment.core.schedulers;
 
-import com.assignment.core.services.impl.JobTriggerService;
+import com.assignment.core.services.JobTriggerService;
 import org.apache.sling.commons.scheduler.ScheduleOptions;
 import org.apache.sling.commons.scheduler.Scheduler;
 import org.osgi.service.component.annotations.Activate;
