@@ -41,38 +41,37 @@ public class PageCreationWorkflowProcess implements WorkflowProcess {
      * @param args            The {@link MetaDataMap} containing any arguments or metadata passed to the workflow process.
      */
 
-        // Adapt the workflow session to a ResourceResolver
+    // Adapt the workflow session to a ResourceResolver
+    @Override
+    public void execute(WorkItem workItem, WorkflowSession workflowSession, MetaDataMap args) {
 
-        @Override
-        public void execute(WorkItem workItem, WorkflowSession workflowSession, MetaDataMap args) {
+        ResourceResolver resolver = workflowSession.adaptTo(ResourceResolver.class);
+        if (resolver == null) {
+            log.error("Could not adapt WorkflowSession to ResourceResolver");
+            return;
+        }
 
-            ResourceResolver resolver = workflowSession.adaptTo(ResourceResolver.class);
-            if (resolver == null) {
-                log.error("Could not adapt WorkflowSession to ResourceResolver");
-                return;
-            }
+        String csvFilePath = workItem.getWorkflowData().getPayload().toString();
 
-            String csvFilePath = workItem.getWorkflowData().getPayload().toString();
+        List<PageData> pages = csvReaderService.readCSV(resolver, csvFilePath);
+        if (pages.isEmpty()) {
+            log.warn("No pages found in CSV");
+            return;
+        }
 
-            List<PageData> pages = csvReaderService.readCSV(resolver, csvFilePath);
-            if (pages.isEmpty()) {
-                log.warn("No pages found in CSV");
-                return;
-            }
-
-            for (PageData pageData : pages) {
-                try {
-                    pageCreationService.createPage(resolver, pageData);
-                } catch (RepositoryException | PersistenceException e) {
-                    log.error("Error creating page at {}: {}", pageData.getPath(), e.getMessage());
-                }
-            }
-
+        for (PageData pageData : pages) {
             try {
-                resolver.commit();
-            } catch (PersistenceException e) {
-                log.error("Error committing changes: {}", e.getMessage());
+                pageCreationService.createPage(resolver, pageData);
+            } catch (RepositoryException | PersistenceException e) {
+                log.error("Error creating page at {}: {}", pageData.getPath(), e.getMessage());
             }
         }
+
+        try {
+            resolver.commit();
+        } catch (PersistenceException e) {
+            log.error("Error committing changes: {}", e.getMessage());
+        }
     }
+}
 

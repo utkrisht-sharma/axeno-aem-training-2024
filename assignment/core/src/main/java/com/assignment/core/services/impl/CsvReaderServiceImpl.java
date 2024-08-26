@@ -44,72 +44,71 @@ public class CsvReaderServiceImpl implements CsvReaderService {
             return pages;
         }
 
-        try (InputStream inputStream = asset.getOriginal().getStream()) {
+        try {
+            InputStream inputStream = asset.getOriginal().getStream();
             if (inputStream == null) {
                 log.error("Could not get InputStream from Asset: {}", csvFilePath);
                 return pages;
             }
 
             String csvContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            try (BufferedReader br = new BufferedReader(new StringReader(csvContent))) {
-                String line;
-                String cvsSplitBy = ",";
+            BufferedReader br = new BufferedReader(new StringReader(csvContent));
+            String line;
+            String cvsSplitBy = ",";
 
-                boolean isFirstLine = true;
+            boolean isFirstLine = true;
 
-                while ((line = br.readLine()) != null) {
-                    if (isFirstLine) {
-                        isFirstLine = false;
-                        continue;
-                    }
-
-                    // Skip empty lines
-                    if (line.trim().isEmpty()) {
-                        continue;
-                    }
-
-                    String[] pageDetails = line.split(cvsSplitBy);
-                    for (int i = 0; i < pageDetails.length; i++) {
-                        pageDetails[i] = pageDetails[i].trim();
-                    }
-
-                    // Extract the necessary fields
-                    String title = pageDetails.length > 0 ? pageDetails[0] : "";
-                    String path = pageDetails.length > 1 ? pageDetails[1] : "";
-
-                    // If the required fields are missing, log a warning and skip this line
-                    if (title.isEmpty() || path.isEmpty()) {
-                        log.warn("Skipping invalid CSV line due to missing required fields: Title={}, Path={}", title, path);
-                        continue;
-                    }
-
-                    // Extract optional fields with default values
-                    String description = pageDetails.length > 2 ? pageDetails[2] : "";
-                    String tags = pageDetails.length > 3 ? pageDetails[3] : "";
-                    String thumbnail = pageDetails.length > 4 ? pageDetails[4] : "";
-
-                    // Log info for missing optional fields
-                    if (description.isEmpty()) {
-                        log.info("Description is missing for page with Title: {} at Path: {}", title, path);
-                    }
-
-                    if (tags.isEmpty()) {
-                        log.info("Tags are missing for page with Title: {} at Path: {}", title, path);
-                    }
-
-                    if (thumbnail.isEmpty()) {
-                        log.info("Thumbnail is missing for page with Title: {} at Path: {}", title, path);
-                    }
-
-                    // Create a PageData object and add it to the list
-                    PageData pageData = new PageData(title, path, description, tags, thumbnail);
-                    pages.add(pageData);
-
-                    log.info("Added page data from CSV: Title={}, Path={}", title, path);
+            while ((line = br.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    continue;
                 }
-            } catch (IOException e) {
-                log.error("Error reading CSV content: {}", e.getMessage(), e);
+
+                // Skip empty lines
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+
+                String[] pageDetails = line.split(cvsSplitBy);
+                for (int i = 0; i < pageDetails.length; i++) {
+                    pageDetails[i] = pageDetails[i].trim();
+                }
+
+                // Extract the necessary fields
+                String title = pageDetails.length > 0 ? pageDetails[0] : "";
+                String path = pageDetails.length > 1 ? pageDetails[1] : "";
+
+                // If the required fields are missing, log a warning and skip this line
+                if (title.isEmpty() || path.isEmpty()) {
+                    log.warn("Skipping invalid CSV line due to missing required fields: Title={}, Path={}", title, path);
+                    continue;
+                }
+
+                // Extract optional fields with default values
+                String description = pageDetails.length > 2 ? pageDetails[2] : "";
+                String tags = pageDetails.length > 3 ? pageDetails[3] : "";
+                String thumbnail = pageDetails.length > 4 ? pageDetails[4] : "";
+
+                // Log info for missing optional fields
+                if (description.isEmpty()) {
+                    log.info("Description is missing for page with Title: {} at Path: {}", title, path);
+                }
+
+                if (tags.isEmpty()) {
+                    log.info("Tags are missing for page with Title: {} at Path: {}", title, path);
+                }
+
+                if (thumbnail.isEmpty()) {
+                    log.info("Thumbnail is missing for page with Title: {} at Path: {}", title, path);
+                }
+
+                // Create a PageData object and add it to the list
+                PageData pageData = new PageData(title, path, description, tags, thumbnail);
+                pages.add(pageData);
+
+                log.info("Added page data from CSV: Title={}, Path={}", title, path);
             }
+
 
         } catch (IOException e) {
             log.error("Error getting InputStream from Asset: {}", e.getMessage(), e);

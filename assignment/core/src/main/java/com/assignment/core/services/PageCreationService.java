@@ -25,9 +25,6 @@ public interface PageCreationService {
      *                      or a failure to set page properties.
      */
 
-//    void createPage(PageManager pageManager, PageData pageData) throws WCMException;
-
     void createPage(ResourceResolver resolver, PageData pageData) throws RepositoryException, PersistenceException;
 
-    void saveSession(ResourceResolver resolver);
 }
