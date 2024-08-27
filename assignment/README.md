@@ -37,7 +37,6 @@ Or alternatively
 
 Or to deploy only the bundle to the author, run
 
-    mvn clean install -PautoInstallBundle
 
 Or to deploy only a single content package, run in the sub-module directory (i.e `ui.apps`)
 
