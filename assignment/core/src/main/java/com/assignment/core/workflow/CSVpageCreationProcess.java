@@ -195,7 +195,7 @@ public class CSVpageCreationProcess implements WorkflowProcess {
             String thumbnail = csvData[4].trim();
 
             String pageName = generateValidName(title);
-            Page page = pageManager.create(path, pageName, "/conf/global/settings/wcm/templates/page", title);
+            Page page = pageManager.create(path, pageName, "/conf/assignment/settings/wcm/templates/page-content", title);
 
             if (page != null) {
                 LOG.info("Page created successfully: {}/{}", path, title);
