@@ -6,12 +6,12 @@ $(document).ready(function () {
 
 
         var formData = {
-            clientName: $("#clientName").val(),
-            clientIncome: $("#clientIncome").val(),
-            loanAmount: $("#loanAmount").val(),
-            loanTerm: $("#loanTerm").val(),
-            existingEMIs: $("#existingEMIs").val(),
-            interestRate: $("#interestRate").val()
+            clientName: $(".clientName").val(),
+            clientIncome: $(".clientIncome").val(),
+            loanAmount: $(".loanAmount").val(),
+            loanTerm: $(".loanTerm").val(),
+            existingEMIs: $(".existingEMIs").val(),
+            interestRate: $(".interestRate").val()
         };
 
 

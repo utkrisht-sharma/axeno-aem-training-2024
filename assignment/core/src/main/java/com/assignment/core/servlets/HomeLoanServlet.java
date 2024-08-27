@@ -6,6 +6,7 @@ import com.assignment.core.services.LoanEligibilityService;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.ServletResolverConstants;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.commons.json.JSONObject;
@@ -21,9 +22,8 @@ import java.util.regex.Matcher;
 
 /**
  * Servlet for processing home loan application.
- * This servlet handles HTTP POST requests for home loan processing.
  */
-@Component(service = Servlet.class, property = {ServletResolverConstants.SLING_SERVLET_METHODS + "=POST", ServletResolverConstants.SLING_SERVLET_RESOURCE_TYPES + "=assignment/components/homeloaneligibilityform", ServletResolverConstants.SLING_SERVLET_EXTENSIONS + "=json"})
+@Component(service = Servlet.class, property = {ServletResolverConstants.SLING_SERVLET_METHODS + "="+ HttpConstants.METHOD_POST, ServletResolverConstants.SLING_SERVLET_RESOURCE_TYPES + "=assignment/components/homeloaneligibilityform", ServletResolverConstants.SLING_SERVLET_EXTENSIONS + "=json"})
 public class HomeLoanServlet extends SlingAllMethodsServlet {
 
     @Reference

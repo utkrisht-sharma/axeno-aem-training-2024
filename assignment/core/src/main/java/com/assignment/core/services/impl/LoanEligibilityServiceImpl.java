@@ -1,5 +1,6 @@
 package com.assignment.core.services.impl;
 
+import com.assignment.core.constants.LoanConstants;
 import com.assignment.core.loanrequest.HomeLoanRequest;
 import com.assignment.core.services.LoanEligibilityService;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -15,10 +16,7 @@ public class LoanEligibilityServiceImpl implements LoanEligibilityService {
     double monthlyInterestRate;
 
     /**
-     * Determines if the client is eligible for a home loan.
-     *
-     * @param userData The {@code HomeLoanRequest} object containing details of the loan request.
-     * @return {true} if the combined EMI and existing EMIs are within 50% of the client's income, {false} otherwise.
+     * {@inheritDoc}
      */
 
     @Override
@@ -31,10 +29,7 @@ public class LoanEligibilityServiceImpl implements LoanEligibilityService {
     }
 
     /**
-     * Calculates the EMI for the home loan.
-     *
-     * @param userData The {HomeLoanRequest} object containing details of the loan request.
-     * @return The calculated EMI for the home loan.
+     * {@inheritDoc}
      */
 
     @Override
@@ -44,10 +39,7 @@ public class LoanEligibilityServiceImpl implements LoanEligibilityService {
     }
 
     /**
-     * Extracts loan application data from the request.
-     *
-     * @param request The Sling HTTP request object containing the loan application data.
-     * @return A {HomeLoanRequest} object populated with the request data.
+     * {@inheritDoc}
      */
     @Override
     public HomeLoanRequest extractRequestData(SlingHttpServletRequest request) {
@@ -63,10 +55,7 @@ public class LoanEligibilityServiceImpl implements LoanEligibilityService {
     }
 
     /**
-     * Processes the loan request to determine eligibility and calculate EMI.
-     *
-     * @param userData {HomeLoanRequest} object containing the loan application data.
-     * @return A {JSONObject} containing the loan eligibility status and EMI calculation.
+     * {@inheritDoc}
      */
     @Override
     public JSONObject processLoanRequest(HomeLoanRequest userData) {
@@ -74,15 +63,15 @@ public class LoanEligibilityServiceImpl implements LoanEligibilityService {
 
         if (isEligible(userData)) {
             double emi = calculateEMI(userData);
-            jsonResponse.put("clientName", userData.getClientName());
-            jsonResponse.put("eligible", true);
-            jsonResponse.put("emi", emi);
-            jsonResponse.put("message", "Loan Approved");
+            jsonResponse.put(LoanConstants.CLIENT_NAME, userData.getClientName());
+            jsonResponse.put(LoanConstants.ELIGIBLE, LoanConstants.ELIGIBLE_TRUE);
+            jsonResponse.put(LoanConstants.EMI, emi);
+            jsonResponse.put(LoanConstants.MESSAGE, LoanConstants.LOAN_APPROVED);
         } else {
-            jsonResponse.put("clientName", userData.getClientName());
-            jsonResponse.put("eligible", false);
-            jsonResponse.put("emi", "N/A");
-            jsonResponse.put("message", "Loan Rejected");
+            jsonResponse.put(LoanConstants.CLIENT_NAME, userData.getClientName());
+            jsonResponse.put(LoanConstants.ELIGIBLE, LoanConstants.ELIGIBLE_FALSE);
+            jsonResponse.put(LoanConstants.EMI, LoanConstants.EMI_NOT_AVAILABLE);
+            jsonResponse.put(LoanConstants.MESSAGE, LoanConstants.LOAN_REJECTED);
         }
 
         return jsonResponse;
