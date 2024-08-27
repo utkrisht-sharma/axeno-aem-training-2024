@@ -37,18 +37,14 @@ public class NodeManagementServiceImpl implements NodeManagementService {
                 sessionResource = resolver.create(parentResource, "session20", Collections.singletonMap("jcr:primaryType", "nt:unstructured"));
             }
 
-            if (sessionResource != null) {
-                Resource resultResource = resolver.create(sessionResource, UUID.randomUUID().toString(), Collections.singletonMap("jcr:primaryType", "nt:unstructured"));
-                ModifiableValueMap properties = resultResource.adaptTo(ModifiableValueMap.class);
-                if (properties != null) {
-                    properties.put("searchResult", totalMatches);
-                    resolver.commit();
-                    LOG.info("Node created or updated successfully with searchResult: {}", totalMatches);
-                } else {
-                    throw new RepositoryException("Unable to adapt resource to ModifiableValueMap");
-                }
+            Resource resultResource = resolver.create(sessionResource, UUID.randomUUID().toString(), Collections.singletonMap("jcr:primaryType", "nt:unstructured"));
+            ModifiableValueMap properties = resultResource.adaptTo(ModifiableValueMap.class);
+            if (properties != null) {
+                properties.put("searchResult", totalMatches);
+                resolver.commit();
+                LOG.info("Node created or updated successfully with searchResult: {}", totalMatches);
             } else {
-                throw new RepositoryException("Failed to create or find session20 resource");
+                throw new RepositoryException("Unable to adapt resource to ModifiableValueMap");
             }
         } catch (PersistenceException e) {
             LOG.error("Error persisting changes: {}", e.getMessage());

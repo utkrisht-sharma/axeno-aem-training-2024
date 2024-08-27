@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import java.util.*;
+
 /**
  * Implementation of the SearchService interface.
  * Provides methods to search for pages in the repository based on specified criteria.
@@ -65,7 +66,8 @@ public class SearchServiceImpl implements SearchService {
                 results.add(hit.getPath());  // Adding the path of each matching page to the results list
                 log.debug("Adding result path: {}", hit.getPath());
             } catch (RepositoryException e) {
-                log.error("Error retrieving path from hit", e);  // Logging any exceptions that occur
+                log.error("Error retrieving path from hit: {}", e.getMessage(), e);
+                // Logging any exceptions that occur
             }
         });
 
