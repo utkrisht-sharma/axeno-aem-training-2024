@@ -1,24 +1,27 @@
 package com.assignment.core.servlets;
 
+import com.assignment.core.constants.ServletConstants;
 import com.assignment.core.services.NodeOperationService;
 import com.assignment.core.services.PageSearchService;
 import com.assignment.core.services.ValidationService;
-import com.day.cq.search.result.Hit;
-import com.day.cq.search.result.SearchResult;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
-import org.apache.sling.commons.json.JSONArray;
+import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,20 +31,20 @@ import org.slf4j.LoggerFactory;
 @Component(
         service = { Servlet.class },
         property = {
-                "sling.servlet.paths=/bin/pageSearchAndManagement",
-                "sling.servlet.methods=POST",
-                "sling.servlet.extensions=json"
+                "sling.servlet.paths="+ ServletConstants.SEARCH_SERVLET_PATH,
+                "sling.servlet.methods="+ HttpConstants.METHOD_POST,
+                "sling.servlet.extensions="+ServletConstants.JSON
         }
 )
 public class SearchPagesServlet extends SlingAllMethodsServlet {
     private static final Logger LOG = LoggerFactory.getLogger(SearchPagesServlet.class);
 
     @Reference
-    PageSearchService pageSearchService;
+    private PageSearchService pageSearchService;
     @Reference
-    ValidationService validation;
+    private ValidationService validation;
     @Reference
-    NodeOperationService operations;
+    private NodeOperationService operations;
 
     /**
      * Handles POST requests for searching pages and managing nodes.
@@ -49,39 +52,30 @@ public class SearchPagesServlet extends SlingAllMethodsServlet {
     @Override
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException {
         LOG.info("Handling POST Request");
+        Map<String,String>parameters = new HashMap<>();
         PrintWriter writer=response.getWriter();
-        String path = request.getParameter("path");
-        String propertyOne = request.getParameter("propertyOne");
-        String propertyOneValue = request.getParameter("propertyOneValue");
-        String propertyTwo = request.getParameter("propertyTwo");
-        String propertyTwoValue = request.getParameter("propertyTwoValue");
-        String save = request.getParameter("save");
-        if(!validation.validateParameters(path,propertyOne,propertyOneValue,propertyTwo,propertyOneValue,save)){
+        parameters.put("path", request.getParameter("path"));
+        parameters.put("propertyOne", request.getParameter("propertyOne"));
+        parameters.put("propertyOneValue", request.getParameter("propertyOneValue"));
+        parameters.put("propertyTwo", request.getParameter("propertyTwo"));
+        parameters.put("propertyTwoValue", request.getParameter("propertyTwoValue"));
+        parameters.put("save", request.getParameter("save"));
+        if(!validation.validateParameters(parameters)){
             LOG.warn("Validation failed");
             response.setStatus(SlingHttpServletResponse.SC_BAD_REQUEST);
             writer.write("Invalid Parameters");
             return;
         }
         try (ResourceResolver resolver = request.getResourceResolver()) {
-            SearchResult searchResult = pageSearchService.findPages(resolver, path, propertyOne, propertyOneValue, propertyTwo, propertyTwoValue);
-            JSONObject jsonResponse = new JSONObject();
-            JSONArray resultsArray = new JSONArray();
-
-            List<Hit> hits = searchResult.getHits();
-            for (Hit hit : hits) {
-                resultsArray.put(hit.getPath());
-            }
-            operations.selectNodeOperation(resolver,save,searchResult.getTotalMatches());
-            jsonResponse.put("totalMatches", searchResult.getTotalMatches());
-            jsonResponse.put("topResults", resultsArray);
-
+            JSONObject jsonResponse = pageSearchService.findPages(resolver, parameters);
+            operations.selectNodeOperation(resolver,parameters.get("save"),jsonResponse.getLong("totalMatches"));
             response.setContentType("application/json");
             response.getWriter().write(jsonResponse.toString());
             LOG.info("Search completed successfully.");
-        } catch (Exception e) {
-            LOG.error("Error during search operation");
+        } catch (IOException | RepositoryException e) {
+            LOG.error("Error Occur {} ", e.getMessage());
             response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("An error occurred during the search operation.");
         }
+
     }
 }

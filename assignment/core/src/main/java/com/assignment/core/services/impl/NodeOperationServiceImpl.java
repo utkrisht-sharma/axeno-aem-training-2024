@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.RepositoryException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 @Component(service= NodeOperationService.class)
 public class NodeOperationServiceImpl implements NodeOperationService {
@@ -19,7 +21,7 @@ public class NodeOperationServiceImpl implements NodeOperationService {
     private static final Logger LOG = LoggerFactory.getLogger(NodeOperationServiceImpl.class);
 
     /**
-     * Selects node operation based on the 'save' parameter.
+     * {@inheritDoc}
      */
     @Override
     public void selectNodeOperation(ResourceResolver resolver, String save, long totalMatches) throws PersistenceException, RepositoryException {
@@ -29,38 +31,40 @@ public class NodeOperationServiceImpl implements NodeOperationService {
         else {
             deleteNodes(resolver);
         }
-        resolver.commit();
+
     }
 
     /**
-     * Creates a new node with the search result property.
+     * {@inheritDoc}
      */
     @Override
     public void createNode(ResourceResolver resolver, long totalMatches) throws RepositoryException, PersistenceException {
 
         Resource session20 = resolver.getResource("/content/usergenerated/session20");
-        if (session20 == null) {
+        if (Objects.isNull(session20)) {
             session20 = resolver.create(resolver.getResource("/content/usergenerated"), "session20", ValueMap.EMPTY);
         }
         Map<String,Object> properties=new HashMap<>();
         properties.put("searchResult",totalMatches);
-        String nodeName = "node-" + System.currentTimeMillis();
+        String nodeName = "node-" + UUID.randomUUID().toString();
         resolver.create(session20, nodeName, properties);
+        resolver.commit();
         LOG.info("Node Created successfully");
 
     }
 
 
     /**
-     * Deletes all nodes under '/content/usergenerated/session20'.
+     * {@inheritDoc}
      */
     @Override
     public void deleteNodes(ResourceResolver resolver) throws RepositoryException, PersistenceException {
         Resource session20 = resolver.getResource("/content/usergenerated/session20");
-        if (session20 != null) {
+        if (!Objects.isNull(session20)) {
             for (Resource child : session20.getChildren()) {
                 resolver.delete(child);
             }
+            resolver.commit();
             LOG.info("Nodes Deleted Successfully");
         }
         else{

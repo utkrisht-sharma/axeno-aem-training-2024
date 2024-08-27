@@ -5,13 +5,19 @@ import com.assignment.core.services.PageSearchService;
 import com.day.cq.search.PredicateGroup;
 import com.day.cq.search.Query;
 import com.day.cq.search.QueryBuilder;
+import com.day.cq.search.result.Hit;
 import com.day.cq.search.result.SearchResult;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.commons.json.JSONArray;
+import org.apache.sling.commons.json.JSONObject;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,18 +35,18 @@ public class PageSearchServiceImpl implements  PageSearchService{
     private QueryBuilder queryBuilder;
 
     /**
-     * Finds pages based on provided search criteria.
+     * {@inheritDoc}
      */
     @Override
-    public SearchResult findPages(ResourceResolver resolver, String path, String propertyOne, String propertyOneValue, String propertyTwo, String propertyTwoValue) {
+    public JSONObject findPages(ResourceResolver resolver, Map<String,String>parameters) throws RepositoryException {
         LOG.info("Searching Of Page Started");
         Map<String, String> queryMap = new HashMap<>();
-        queryMap.put("path", path);
+        queryMap.put("path", parameters.get("path"));
         queryMap.put("type", "cq:Page");
-        queryMap.put("1_property", "jcr:content/" + propertyOne);
-        queryMap.put("1_property.value", propertyOneValue);
-        queryMap.put("2_property", "jcr:content/" + propertyTwo);
-        queryMap.put("2_property.value", propertyTwoValue);
+        queryMap.put("1_property", "jcr:content/" + parameters.get("propertyOne"));
+        queryMap.put("1_property.value", parameters.get("propertyOneValue"));
+        queryMap.put("2_property", "jcr:content/" + parameters.get("propertyTwo"));
+        queryMap.put("2_property.value", parameters.get("propertyTwoValue"));
         queryMap.put("p.limit", "10");
         queryMap.put("orderby", "@jcr:content/jcr:lastModified");
         queryMap.put("orderby.sort", "desc");
@@ -50,8 +56,27 @@ public class PageSearchServiceImpl implements  PageSearchService{
         PredicateGroup predicateGroup = PredicateGroup.create(queryMap);
         Query query = queryBuilder.createQuery(predicateGroup, resolver.adaptTo(Session.class));
         LOG.info("Searching completed Successfully");
-        return query.getResult();
+        return getPathsFromSearchResults(query.getResult());
+
 
     }
+
+    /**
+     *{@inheritDoc}
+     */
+    @Override
+    public JSONObject getPathsFromSearchResults(SearchResult result) throws RepositoryException {
+        JSONObject jsonResponse = new JSONObject();
+        JSONArray resultsArray = new JSONArray();
+
+        List<Hit> hits = result.getHits();
+        for (Hit hit : hits) {
+            resultsArray.put(hit.getPath());
+        }
+        jsonResponse.put("totalMatches", result.getTotalMatches());
+        jsonResponse.put("topResults", resultsArray);
+        return jsonResponse;
+    }
+
 
 }

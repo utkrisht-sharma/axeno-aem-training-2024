@@ -5,6 +5,8 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Component(service = ValidationService.class)
@@ -14,33 +16,16 @@ public class ValidationServiceImpl implements ValidationService {
 
 
     /**
-     * Validates the provided parameters.
+     * {@inheritDoc}
      */
     @Override
-    public boolean validateParameters(String path, String propertyOne, String propertyOneValue, String propertyTwo, String propertyTwoValue,String save) {
-        if(!Objects.nonNull(path) || path.trim().isEmpty()){
-            LOG.error("Validation Fail : Invalid search path");
-            return false;
-        }
-        if(!Objects.nonNull(propertyOne) || propertyOne.trim().isEmpty()){
-            LOG.error("Validation Fail : Invalid Property One");
-            return false;
-        }
-        if(!Objects.nonNull(propertyOneValue) || propertyOneValue.trim().isEmpty()){
-            LOG.error("Validation Fail : Invalid Property One Value");
-            return false;
-        }
-        if(!Objects.nonNull(propertyTwo) || propertyTwo.trim().isEmpty()){
-            LOG.error("Validation Fail : Invalid Property Two");
-            return false;
-        }
-        if(!Objects.nonNull(propertyTwoValue) || propertyTwoValue.trim().isEmpty()){
-            LOG.error("Validation Fail : Invalid Property Two Value");
-            return false;
-        }
-        if(!Objects.nonNull(save) || save.trim().isEmpty() || !(save.equalsIgnoreCase("true") || save.equalsIgnoreCase("false"))){
-            LOG.error("Validation Fail : Invalid Property Save");
-            return false;
+    public boolean validateParameters(Map<String, String> parameters) {
+        for (String fields : parameters.keySet()) {
+            if (!Objects.nonNull(parameters.get(fields)) || parameters.get(fields).trim().isEmpty()) {
+                LOG.error("Validation Fail : Invalid {} ", fields);
+                return false;
+            }
+
         }
 
         LOG.info("Validation Successfully Completed");

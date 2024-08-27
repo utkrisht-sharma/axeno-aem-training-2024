@@ -1,5 +1,11 @@
 package com.assignment.core.services;
 
+
+import java.util.Map;
+
 public interface ValidationService {
-    boolean validateParameters(String path, String propertyOne, String propertyOneValue, String propertyTwo, String propertyTwoValue,String save);
+    /**
+     * Validates the provided parameters.
+     */
+    boolean validateParameters(Map<String, String> parameters);
 }
