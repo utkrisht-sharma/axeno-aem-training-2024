@@ -1,7 +1,14 @@
 {
-    "scripts": [
-        "create path (sling:OrderedFolder) /content/dam/assignment",
-        "create path (nt:unstructured) /content/dam/assignment/jcr:content",
-        "set properties on /content/dam/assignment/jcr:content\n  set cq:conf{String} to /conf/assignment\n  set jcr:title{String} to \"Assignment\"\nend"
-    ]
+  "scripts": [
+    "create path (sling:OrderedFolder) /content/dam/assignment",
+    "create path (nt:unstructured) /content/dam/assignment/jcr:content",
+    "set properties on /content/dam/assignment/jcr:content\n  set cq:conf{String} to /conf/assignment\n  set jcr:title{String} to \"Assignment\"\nend",
+    "create service user workflow-service-user",
+    "set ACL for workflow-service-user\n\tallow jcr:read, jcr:write, jcr:addChildNodes, jcr:removeNode on /var/workflow/models\nend",
+    "set ACL for workflow-service-user\n\tallow jcr:read on /libs\nend",
+    "set ACL for workflow-service-user\n\tallow jcr:read, jcr:write, jcr:addChildNodes, jcr:removeNode on /content\nend",
+    "set ACL for workflow-service-user\n\tallow jcr:read, jcr:write, jcr:addChildNodes, jcr:removeNode on /conf\nend"
+  ]
 }
+
+

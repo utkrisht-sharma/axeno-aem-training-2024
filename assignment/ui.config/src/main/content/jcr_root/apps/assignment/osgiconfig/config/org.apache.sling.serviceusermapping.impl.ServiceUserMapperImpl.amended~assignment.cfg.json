@@ -1,0 +1,5 @@
+{
+  "user.mapping": [
+    "assignment.core:workflowserviceuser=workflow-service-user"
+  ]
+}

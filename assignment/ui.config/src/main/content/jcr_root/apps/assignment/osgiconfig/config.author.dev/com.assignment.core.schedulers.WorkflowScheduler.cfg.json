@@ -1,0 +1,7 @@
+{
+    "schedulerName": "workflow Page Scheduler",
+    "enabled":"true",
+    "cronExpression": "0 0 12 1/1 * ? *",
+    "csvPath": "/content/dam/assignment/data.csv",
+    "model" : "/var/workflow/models/create-pages"
+}
