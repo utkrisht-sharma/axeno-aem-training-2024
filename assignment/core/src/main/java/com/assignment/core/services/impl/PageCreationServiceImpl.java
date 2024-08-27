@@ -22,6 +22,7 @@ public class PageCreationServiceImpl implements PageCreationService {
 
     private static final Logger log = LoggerFactory.getLogger(PageCreationServiceImpl.class);
 
+
     @Override
     public void createPage(ResourceResolver resolver, PageData pageData) throws PersistenceException {
         // Generate a base name for the page using the title
@@ -60,16 +61,18 @@ public class PageCreationServiceImpl implements PageCreationService {
             log.info("Tags are missing for page with Title: {}", pageData.getTitle());
         }
 
+        // Create the jcr:content resource
+        Resource contentResource = resolver.create(pageResource, "jcr:content", contentProperties);
+
+        // Add the image node under the jcr:content node if a thumbnail is provided
         if (pageData.getThumbnail() != null && !pageData.getThumbnail().isEmpty()) {
             Map<String, Object> imageProperties = new HashMap<>();
             imageProperties.put("jcr:primaryType", "nt:unstructured");
             imageProperties.put("fileReference", pageData.getThumbnail());
-            resolver.create(pageResource, "image", imageProperties);
+            resolver.create(contentResource, "image", imageProperties);
         } else {
             log.info("Thumbnail is missing for page with Title: {}", pageData.getTitle());
         }
-
-        resolver.create(pageResource, "jcr:content", contentProperties);
 
         // Save the session immediately after page creation
         try {
@@ -80,6 +83,7 @@ public class PageCreationServiceImpl implements PageCreationService {
             throw e;  // Rethrow the exception to ensure it's handled by the calling code if needed
         }
     }
+
 
     private String generateUniquePageName(Resource parentResource, String baseName) {
         String uniqueName = baseName;
