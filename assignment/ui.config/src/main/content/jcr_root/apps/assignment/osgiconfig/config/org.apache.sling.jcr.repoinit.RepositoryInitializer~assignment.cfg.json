@@ -5,8 +5,8 @@
     "set properties on /content/dam/assignment/jcr:content\n  set cq:conf{String} to /conf/assignment\n  set jcr:title{String} to \"Assignment\"\nend"
   ],
   "scripts": [
-    "create path (nt:unstructured) /home/users/system/assignment",
-    "create service user pageCreationWorkflowServiceUser with path /home/users/system/assignment",
-    "set ACL for pageCreationWorkflowServiceUser\n  allow jcr:read,rep:write,crx:replicate on /content/assignment/workflows\n  allow jcr:all on /conf/assignment\nend"
+
+    "create service user pageCreationWorkflowServiceUser",
+    "set ACL for pageCreationWorkflowServiceUser\n  allow jcr:all on /conf\n  allow jcr:read on /var\n  allow jcr:read on /libs\n  allow jcr:all on /content\nend"
   ]
 }
