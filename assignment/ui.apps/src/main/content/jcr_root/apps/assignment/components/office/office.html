@@ -1,0 +1,14 @@
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"/>
+<sly data-sly-call="${clientlib.css @ categories='assignment.office'}"/>
+
+
+<form action="/bin/department/faculty" method="post">
+    <div>
+        <label for="departmentName">Enter Department Name:</label>
+        <input type="text" id="departmentName" name="department" />
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"/>
+<sly data-sly-call="${clientlib.js @ categories='assignment.office'}"/>
