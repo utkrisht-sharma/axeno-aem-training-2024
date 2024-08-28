@@ -1,0 +1,29 @@
+<sly data-sly-use.model="com.assignment.core.models.ValueDisplayModel">
+    <!-- Include any custom header libraries needed for this component -->
+    <div data-sly-include="customheaderlibs.html"></div>
+
+    <div class="my-component">
+        <!-- Display the title of the component -->
+        <h1>${model.getTitle}</h1>
+
+        <div id="displayArea">
+            <!-- Check if the selected option is IMAGE -->
+            <sly data-sly-test="${model.getSelectedOption == 'IMAGE'}">
+                <!-- Display the image if the selected option is IMAGE -->
+                <img src="${model.getImage}" alt="Selected Image"/>
+            </sly>
+
+            <!-- Check if the selected option is LINK -->
+            <sly data-sly-test="${model.getSelectedOption == 'LINK'}">
+                <!-- Display a hyperlink if the selected option is LINK -->
+                <a href="${model.getPath}">${model.getPath}</a>
+            </sly>
+
+            <!-- Check if the selected option is TEXT -->
+            <sly data-sly-test="${model.getSelectedOption == 'TEXT'}">
+                <!-- Display the text if the selected option is TEXT -->
+                <p>${model.getText}</p>
+            </sly>
+        </div>
+    </div>
+</sly>

@@ -1,0 +1,40 @@
+.my-component {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .my-component h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        #displayArea {
+            margin-top: 20px;
+        }
+
+        #displayArea img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        #displayArea a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        #displayArea a:hover {
+            text-decoration: underline;
+        }
+
+        #displayArea p {
+            font-size: 16px;
+            color: #666;
+        }
