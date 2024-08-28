@@ -1,0 +1,29 @@
+<sly data-sly-use.model="com.assignment.core.models.AddProductModel"></sly>
+<div style="background-image: url(${model.fileReference @ context='styleString'});">
+
+    <sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"></sly>
+    <sly data-sly-call="${clientlib.css @ categories='clientlib-product'}"></sly>
+    <h1 class="welcome-title"> Welcome to Cart </h1>
+       <div class="merchandise-component" >
+           <p>Title : ${model.title}</p>
+           <p class="product-name" data-product-type="${model.productName}">Product: ${model.productName}</p>
+          <div class="product-quantity">
+            <label for="quantity" class="quantity-label">Select Quantity:</label>
+            <select id="quantity" class="quantity-select">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+        </div>
+        <button id="addToCart" class="add-to-cart-button">Add to Cart</button>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <sly data-sly-call="${clientlib.js @ categories='clientlib-product'}"></sly>
+</div>
