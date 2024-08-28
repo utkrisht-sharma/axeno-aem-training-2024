@@ -1,0 +1,31 @@
+<!-- client library for JavaScript and CSS -->
+<sly data-sly-use.clientlib="/libs/granite/sightly/templates/clientlib.html"
+     data-sly-call="${clientlib.all @ categories='assignment.studentMarks'}"></sly>
+
+<!-- Sling Model -->
+<sly data-sly-use.model="com.assignment.core.models.StudentMarksModel" />
+
+<!--jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<sly>
+    <!-- Check if subjects are available -->
+    <sly data-sly-test="${model.subjects.size > 0}">
+        <sly data-sly-list.subject="${model.subjects}">
+            <p>
+                <span class="subject-name">${subject.name}</span> -
+                <span class="subject-marks">${subject.marks}</span>
+                (<span class="subject-result">${subject.result}</span>)
+            </p>
+        </sly>
+    </sly>
+
+    <!-- Show a message if no subjects are available -->
+    <sly data-sly-test="${model.subjects.size == 0}">
+        <p>Please add student details in the multifield.</p>
+    </sly>
+</sly>
+
+<!-- Button to call servlet and display total marks -->
+<button id="addButton">Add</button>
+<div id="totalMarksResult"></div>
