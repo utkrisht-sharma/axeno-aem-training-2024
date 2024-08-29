@@ -6,6 +6,8 @@ import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
  * A Sling Job that logs a message periodically.
  */
@@ -24,17 +26,15 @@ public class PeriodicLoggerJob implements JobConsumer {
      */
     @Override
     public JobResult process(Job job) {
-        try {
+
+        String jobName = (String) job.getProperty("JobName");
+
             LOGGER.info("Periodic Logger Job started at: {}", System.currentTimeMillis());
-
-            // Simulate some processing (if needed)
-            // For example: perform job-related work here
-
-            LOGGER.info("Periodic Logger Job executed successfully at: {}", System.currentTimeMillis());
+            LOGGER.info("jobName : {}", jobName);
             return JobResult.OK;
-        } catch (Exception e) {
-            LOGGER.error("Periodic Logger Job failed at: {}", System.currentTimeMillis(), e);
-            return JobResult.FAILED;
-        }
+
+
+
+
     }
 }

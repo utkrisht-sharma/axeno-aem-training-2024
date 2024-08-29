@@ -1,12 +1,16 @@
 package com.assignment.core.schedulers;
 
 import com.assignment.core.config.NodeDeletionSchedulerConfiguration;
-import com.assignment.core.services.NodeDeletionService;
+import org.apache.sling.api.resource.*;
 import org.apache.sling.commons.scheduler.ScheduleOptions;
 import org.apache.sling.commons.scheduler.Scheduler;
 import org.osgi.service.component.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * A scheduler component that manages the periodic deletion of nodes.
@@ -16,14 +20,18 @@ import org.slf4j.LoggerFactory;
  */
 @Component(service = Runnable.class, immediate = true)
 public class NodeDeletionScheduler implements Runnable {
+    @Reference
+    private ResourceResolverFactory resourceResolverFactory;
+
+    // Keep track of the last deleted node in a persistent way, e.g., in a config node or a file
+    private static String lastDeletedNodePath = "/content/usergenerated/content"; // Starting point
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeDeletionScheduler.class);
 
     @Reference
     private Scheduler scheduler;
 
-    @Reference
-    private NodeDeletionService nodeDeletionService;
 
     private String schedulerName;
     private boolean enabled;
@@ -91,6 +99,59 @@ public class NodeDeletionScheduler implements Runnable {
     @Override
     public void run() {
         LOGGER.info("Scheduler '{}' triggered - running job...", schedulerName);
-        nodeDeletionService.deleteNodes("/content/usergenerated/content");
+        deleteNodes("/content/usergenerated/content");
+    }
+
+    public void deleteNodes(String rootPath) {
+        Map<String, Object> authenticationMap = new HashMap<>();
+        authenticationMap.put(ResourceResolverFactory.SUBSERVICE, "node-deletion-service");
+
+        try (ResourceResolver resourceResolver = resourceResolverFactory.getServiceResourceResolver(authenticationMap)) {
+            Resource rootResource = resourceResolver.getResource(rootPath);
+
+            if (rootResource != null) {
+                // Get child resources from the last deleted node path
+                Iterator<Resource> childResources = rootResource.listChildren();
+                boolean nodeDeleted = false;
+
+                while (childResources.hasNext()) {
+                    Resource childResource = childResources.next();
+                    if (childResource.getPath().equals(lastDeletedNodePath)) {
+                        // Move to the next node
+                        continue;
+                    }
+
+                    deleteNode(childResource, resourceResolver);
+                    lastDeletedNodePath = childResource.getPath(); // Update last deleted node path
+                    nodeDeleted = true;
+                    break; // Exit after deleting one node
+                }
+
+                if (nodeDeleted) {
+                    resourceResolver.commit();
+                }
+            } else {
+                LOGGER.warn("Root node not found: {}", rootPath);
+            }
+        } catch (PersistenceException e) {
+            LOGGER.error("Failed to commit changes after deleting nodes under {}", rootPath, e);
+        } catch (LoginException e) {
+            LOGGER.error("Login error while accessing {}", rootPath, e);
+        }
+    }
+
+    /**
+     * Deletes a specific node.
+     *
+     * @param resource         The node to be deleted.
+     * @param resourceResolver The {@link ResourceResolver} used to perform the deletion.
+     */
+    private void deleteNode(Resource resource, ResourceResolver resourceResolver) {
+        try {
+            resourceResolver.delete(resource);
+            LOGGER.info("Deleted node: {}", resource.getPath());
+        } catch (PersistenceException e) {
+            LOGGER.error("Failed to delete node: {}", resource.getPath(), e);
+        }
     }
 }

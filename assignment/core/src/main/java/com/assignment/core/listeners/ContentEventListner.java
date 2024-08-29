@@ -1,5 +1,6 @@
 package com.assignment.core.listeners;
 
+import com.assignment.core.expections.CustomEventException;
 import org.apache.sling.api.SlingConstants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.event.Event;
@@ -32,9 +33,17 @@ public class ContentEventListner implements EventHandler {
      */
     @Override
     public void handleEvent(Event event) {
-        String eventType = event.getTopic();
-        String path = (String) event.getProperty(SlingConstants.PROPERTY_PATH);
+        try {
+            String eventType = event.getTopic();
+            String path = (String) event.getProperty(SlingConstants.PROPERTY_PATH);
 
-        log.info("Event received: {}, Path: {}", eventType, path);
+            if (path == null || path.isEmpty()) {
+                throw new CustomEventException("Path property is missing or empty in the event.");
+            }
+
+            log.info("Event received: {}, Path: {}", eventType, path);
+        } catch (CustomEventException e) {
+            log.error("Custom event error occurred: {}", e.getMessage(), e);
+        }
     }
 }
