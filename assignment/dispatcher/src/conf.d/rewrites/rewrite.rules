@@ -23,3 +23,14 @@ RewriteCond %{REQUEST_URI} !^/var
 RewriteCond %{REQUEST_URI} !^/conf/(.+\.jpe?g|.+\.png|.+\.svg)$
 RewriteCond %{REQUEST_URI} (.html|.jpe?g|.png|.svg)$
 RewriteRule ^/(.*)$ /content/${CONTENT_FOLDER_NAME}/$1 [PT,L]
+# Redirect rules for specific URL patterns
+RewriteEngine On
+
+
+RewriteCond %{QUERY_STRING} ^lang=([^&]+)&region=([^&]+)$ [NC]
+RewriteRule ^/articles/([^?]+)$ /content/assignment/%2/%1/blogs/%1.html [R=301,L]
+
+RewriteRule ^/articles/([^?]+)$ /content/assignment/us/en/blogs/%1.html? [R=301,L]
+
+
+

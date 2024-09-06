@@ -7,8 +7,8 @@
         cq:isDelivered="{Boolean}false"
         cq:lastModified="{Date}2024-08-29T14:55:19.785+05:30"
         cq:lastModifiedBy="admin"
-        cq:lastReplicated="{Date}2024-09-05T18:45:11.121+05:30"
-        cq:lastReplicated_publish="{Date}2024-09-05T18:45:11.121+05:30"
+        cq:lastReplicated="{Date}2024-09-06T13:18:19.940+05:30"
+        cq:lastReplicated_publish="{Date}2024-09-06T13:18:19.940+05:30"
         cq:lastReplicatedBy="admin"
         cq:lastReplicatedBy_publish="admin"
         cq:lastReplicationAction="Activate"
@@ -18,7 +18,7 @@
         jcr:mixinTypes="[cq:ReplicationStatus2,mix:versionable]"
         jcr:primaryType="cq:PageContent"
         jcr:title="en"
-        jcr:uuid="e0b86e67-0c2d-4097-87a5-3d9d21f0e9bf"
+        jcr:uuid="2542de67-4000-48dc-a76f-e044d2624d45"
         sling:resourceType="assignment/components/page"
         pageTitle="Assignment">
         <root
