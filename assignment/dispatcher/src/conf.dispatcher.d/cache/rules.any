@@ -5,3 +5,8 @@
 #
 
 $include "./default_rules.any"
+
+/1000 {
+         /glob "/content/assignment/user/*"
+         /type "deny"
+      }
