@@ -11,3 +11,7 @@ $include "./default_filters.any"
 
 # Allow manifest.webmanifest files located in the content
 /0102 { /type "allow" /extension "webmanifest" /path "/content/*/manifest" }
+
+/0103 { /type "allow" /method "GET" /url "/content/assignment/api/product/jcr:content.json" /extension "json"}
+/0104 { /type "allow" /method "GET" /url "assignment/component/page"}
+/0105 { /type "allow" /method "GET" /url "/articles/.*"}
