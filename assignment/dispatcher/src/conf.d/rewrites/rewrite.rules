@@ -23,3 +23,20 @@ RewriteCond %{REQUEST_URI} !^/var
 RewriteCond %{REQUEST_URI} !^/conf/(.+\.jpe?g|.+\.png|.+\.svg)$
 RewriteCond %{REQUEST_URI} (.html|.jpe?g|.png|.svg)$
 RewriteRule ^/(.*)$ /content/${CONTENT_FOLDER_NAME}/$1 [PT,L]
+
+
+# Enable rewrite engine
+RewriteEngine On
+
+# Rule 1: Redirect for English (US) blogs with parameters (?lang=en&region=us)
+RewriteCond %{QUERY_STRING} ^lang=en&region=us$
+RewriteRule ^/articles/(.*)$ /content/assignment/us/en/blogs/$1.html [R=301,L]
+
+# Rule 2: Redirect for French (Canada) blogs with parameters (?lang=fr&region=ca)
+RewriteCond %{QUERY_STRING} ^lang=fr&region=ca$
+RewriteRule ^/articles/(.*)$ /content/assignment/ca/fr/blogs/$1.html [R=301,L]
+
+# Rule 3: Default case if no language or region is provided (/articles/blog-id)
+RewriteCond %{QUERY_STRING} !lang= [NC]
+RewriteCond %{QUERY_STRING} !region= [NC]
+RewriteRule ^/articles/(.*)$ /content/assignment/us/en/blogs/$1.html [R=301,L]

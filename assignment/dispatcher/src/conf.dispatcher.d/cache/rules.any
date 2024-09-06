@@ -5,3 +5,13 @@
 #
 
 $include "./default_rules.any"
+/cache {
+    /rules {
+        # Deny caching for all pages under the post-login section
+        /0001 {
+            /glob "*"
+            /type "deny"
+            /url "/content/assignment/user/*"
+        }
+    }
+}
