@@ -5,3 +5,14 @@
 #
 
 $include "./default_rules.any"
+
+
+ /cache {
+     /rules {
+         /0001 {
+             /glob "*"
+             /type "deny"
+             /url "/content/assignment/users/*"
+         }
+     }
+ }
