@@ -1,0 +1,8 @@
+<sly data-sly-use.model="com.assignment.core.models.GetAllPostsModel">
+    <sly data-sly-test="${model.posts}">
+        <sly data-sly-list.post="${model.posts}">
+            <h4>Post title: ${post.title}</h4>
+            <p>Post Body: ${post.body}</p>
+        </sly>
+    </sly>
+</sly>
