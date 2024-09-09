@@ -1,0 +1,14 @@
+<sly data-sly-use.displaycomment="com.assignment.core.models.DisplayCommentModel">
+
+    <div class="post-container">
+        <h2>Post Information</h2>
+        <ul class="post-list">
+            <sly data-sly-list.post="${displaycomment.displayComments}">
+                <li class="post-item">
+                    <h3>${post.title}</h3>
+                    <p>${post.body}</p>
+                </li>
+            </sly>
+        </ul>
+    </div>
+</sly>
