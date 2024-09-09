@@ -1,0 +1,9 @@
+<sly data-sly-use.postModel="com.assignment.core.models.PostComponentModel">
+<sly data-sly-list.posts="${postModel.posts}">
+    <div class="post-item">
+        <h4>Post title: ${posts.title}</h4>
+        <p>body : ${posts.body}</p>
+    </div>
+</sly>
+</sly>
+</sly>
