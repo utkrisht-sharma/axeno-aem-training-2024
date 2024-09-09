@@ -1,0 +1,12 @@
+<sly data-sly-use.model="com.assignment.core.models.JsonDataModel">
+    <sly data-sly-test="${model.post.size>0}">
+        <div data-sly-list.details="${model.post}">
+            <h4>${details.title}</h4>
+            <p>${details.body}</p>
+        </div>
+    </sly>
+    <sly data-sly-test="${model.post.size==0}">
+        <p>No Data Found</p>
+    </sly>
+
+</sly>
