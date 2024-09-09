@@ -1,0 +1,7 @@
+<sly data-sly-use.postsItem="com.assignment.core.models.PostsModel">
+             <sly data-sly-list.post="${postsItem.posts}">
+                <h4>${post.title}</h4>
+                <p>${post.body}</p>
+             </sly>
+        </sly>
+</sly>
