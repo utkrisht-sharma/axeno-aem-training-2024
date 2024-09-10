@@ -1,9 +1,11 @@
 package com.assignment.core.services.impl;
 
 import com.assignment.core.api.UserPostData;
-import com.assignment.core.config.DisplayCommentConfig;
-import com.assignment.core.services.DisplayCommentService;
 
+import com.assignment.core.config.DisplayUserpostConfig;
+
+
+import com.assignment.core.services.DisplayUserpostService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.http.HttpEntity;
@@ -23,17 +25,17 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
-@Component(service = DisplayCommentService.class, immediate = true)
-@Designate(ocd = DisplayCommentConfig.class)
-public class DisplayCommentServiceImpl implements DisplayCommentService {
+@Component(service = DisplayUserpostService.class, immediate = true)
+@Designate(ocd = DisplayUserpostConfig.class)
+public class DisplayUserpostServiceImpl implements DisplayUserpostService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DisplayCommentServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DisplayUserpostServiceImpl.class);
 
     private String postApiUrl;
 
     @Activate
     @Modified
-    protected void activate(DisplayCommentConfig config) {
+    protected void activate(DisplayUserpostConfig config) {
         this.postApiUrl = config.apiUrl();
         LOG.info("Activated with API URL: {}", postApiUrl);
     }

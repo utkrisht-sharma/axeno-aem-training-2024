@@ -4,7 +4,7 @@ import com.assignment.core.api.UserPostData;
 
 import java.util.List;
 
-public interface DisplayCommentService {
+public interface DisplayUserpostService {
 
   List<UserPostData> getPostData();
 }
