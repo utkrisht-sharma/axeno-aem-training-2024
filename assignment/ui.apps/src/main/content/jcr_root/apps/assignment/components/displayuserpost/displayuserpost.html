@@ -1,0 +1,14 @@
+<sly data-sly-use.displayuserpost="com.assignment.core.models.DisplayUserpostModel">
+
+    <div class="post-container">
+        <h2>Post Information</h2>
+        <ul class="post-list">
+            <sly data-sly-list.post="${displayuserpost.displayUserposts}">
+                <li class="post-item">
+                    <h4>${post.title}</h4>
+                    <p>${post.body}</p>
+                </li>
+            </sly>
+        </ul>
+    </div>
+</sly>
