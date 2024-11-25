@@ -1,0 +1,7 @@
+<div class="spotify-integration" data-sly-use.model="com.assignment.core.models.SpotifyIntegrationModel">
+    <!-- Spotify Login Button -->
+    <a href="${model.authorizationUrl}" target="_blank" data-sly-test="${!model.likedSongs}">
+        <button>Login with Spotify</button>
+    </a>
+
+</div>
