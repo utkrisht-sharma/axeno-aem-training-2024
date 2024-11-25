@@ -26,7 +26,6 @@ public class SpotifyDataProcessingServiceImpl implements SpotifyDataProcessingSe
      * @param jsonResponse Raw JSON response from Spotify containing liked songs
      * @return Map of songs categorized by time ranges: oneMonthAgo, threeMonthsAgo, sixMonthsAgo
      */
-
     @Override
     public Map<String, List<JsonObject>> filterSongsByTimeRange(String jsonResponse) {
         Map<String, List<JsonObject>> filteredSongs = new HashMap<>();
@@ -72,7 +71,6 @@ public class SpotifyDataProcessingServiceImpl implements SpotifyDataProcessingSe
      * @param jsonResponse Raw JSON response from Spotify containing liked songs
      * @return Map of songs grouped by artist name
      */
-
     @Override
     public Map<String, List<JsonObject>> groupSongsByArtist(String jsonResponse) {
         Map<String, List<JsonObject>> songsByArtist = new HashMap<>();
@@ -115,7 +113,6 @@ public class SpotifyDataProcessingServiceImpl implements SpotifyDataProcessingSe
      * @param track Original track JSON object
      * @return Simplified JsonObject with name, artist, and album
      */
-
     private JsonObject createSimplifiedTrackMetadata(JsonObject track) {
         String artistName = track.getJsonArray("artists").getJsonObject(0).getString("name");
 

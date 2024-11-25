@@ -15,7 +15,6 @@ import java.util.*;
  * including filtering songs based on certain criteria and categorizing them by artist.
  * The implementation stores this data in the AEM repository under the "spotify-data" node.
  */
-
 @Component(service = SpotifyNodeStorageService.class, immediate = true)
 public class SpotifyNodeStorageServiceImpl implements SpotifyNodeStorageService {
 
@@ -34,7 +33,6 @@ public class SpotifyNodeStorageServiceImpl implements SpotifyNodeStorageService 
      * @param filteredSongs A map of filtered songs categorized by timeframes.
      * @param songsByArtist A map of songs categorized by artist.
      */
-
     @Override
     public void storeSongMetadata(Map<String, List<JsonObject>> filteredSongs,
                                   Map<String, List<JsonObject>> songsByArtist) {
@@ -81,10 +79,9 @@ public class SpotifyNodeStorageServiceImpl implements SpotifyNodeStorageService 
         }
     }
 
-    /** creates Intital resource
-    * and add basic properties needed for node
-     */
-
+     /** creates Intital resource
+      * and add basic properties needed for node
+      */
     private Resource createInitialResource(ResourceResolver resolver, String path) {
         // Create basic properties for new node
         Map<String, Object> properties = new HashMap<>();
@@ -162,7 +159,6 @@ public class SpotifyNodeStorageServiceImpl implements SpotifyNodeStorageService 
      *  @param rootResource The root resource to store data under.
      *  @param songsByArtist The map of songs categorized by artist.
      */
-
     private void storeOrUpdateArtistSongs(ResourceResolver resolver, Resource rootResource,
                                           Map<String, List<JsonObject>> songsByArtist)  {
 
@@ -182,7 +178,7 @@ public class SpotifyNodeStorageServiceImpl implements SpotifyNodeStorageService 
             }
         }
 
-        // Process each artist
+        // Processing each artist
         for (Map.Entry<String, List<JsonObject>> entry : songsByArtist.entrySet()) {
             String artistName = entry.getKey();
             List<JsonObject> songs = entry.getValue();
@@ -236,7 +232,6 @@ public class SpotifyNodeStorageServiceImpl implements SpotifyNodeStorageService 
      * @param properties The properties to set on the resource.
      * @return The created resource.
      */
-
     private Resource createResource(ResourceResolver resolver, String path, Map<String, Object> properties) {
         try {
             int lastSlash = path.lastIndexOf('/');
@@ -265,7 +260,6 @@ public class SpotifyNodeStorageServiceImpl implements SpotifyNodeStorageService 
      * @param name The name to be converted to a valid node name.
      * @return A valid node name.
      */
-
     private String makeValidNodeName(String name) {
         if (name == null || name.trim().isEmpty()) {
             return "unnamed_" + System.currentTimeMillis();

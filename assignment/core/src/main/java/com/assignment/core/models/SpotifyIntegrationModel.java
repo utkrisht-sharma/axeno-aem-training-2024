@@ -8,12 +8,9 @@ import org.apache.sling.models.annotations.injectorspecific.OSGiService;
 
 /**
  * Model to interact with Spotify's authentication system.
- * <p>
  * This model uses the SpotifyIntegrationService to fetch the Spotify authorization URL.
  * It is designed to be used with a resource in Sling and supports optional injection strategy for flexibility.
- * </p>
  */
-
  @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class SpotifyIntegrationModel {
 

@@ -15,6 +15,5 @@ public interface SpotifyNodeStorageService {
      * @param filteredSongs Map of songs filtered by time range
      * @param songsByArtist Map of songs grouped by artist
      */
-
     void storeSongMetadata( Map<String, List<JsonObject>> filteredSongs, Map<String, List<JsonObject>> songsByArtist);
 }

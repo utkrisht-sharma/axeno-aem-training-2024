@@ -103,7 +103,6 @@ public class SpotifyAuthorizationServlet extends SlingSafeMethodsServlet {
      * @param response Servlet response to send cookies and processed data
      * @throws IOException If an error occurs during processing
      */
-
     private void handleTokensAndProcessData(String tokenResponse, SlingHttpServletResponse response) throws IOException {
         JsonObject tokens = Json.createReader(new StringReader(tokenResponse)).readObject();
 

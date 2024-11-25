@@ -8,6 +8,7 @@ import java.util.Map;
  * Provides methods to filter and group songs based on various criteria.
  */
 public interface SpotifyDataProcessingService {
+
      /**
       * Filters songs based on a specific time range.
       *

@@ -2,6 +2,7 @@ package com.assignment.core.services;
 
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
+
 /**
  * Configuration interface for Spotify Integration Service.
  * This interface defines configuration parameters for connecting to and
@@ -12,6 +13,7 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
         description = "Configuration for Spotify Integration Service"
 )
 public @interface SpotifyIntegrationConfig {
+
     /**
      * Retrieves the Spotify App Client ID used for authentication.
      *
@@ -27,6 +29,7 @@ public @interface SpotifyIntegrationConfig {
      * Retrieves the Spotify App Client Secret used for authentication.
      * @return The client secret as a string, with a default empty string if not set
      */
+
     @AttributeDefinition(
             name = "Client Secret",
             description = "Spotify App Client Secret"

@@ -43,7 +43,6 @@ public class SpotifyIntegrationServiceImpl implements SpotifyIntegrationService 
      *
      * @param config Configuration settings for Spotify integration
      */
-
     @Activate
     @Modified
     public void activate(SpotifyIntegrationConfig config) {
@@ -74,7 +73,6 @@ public class SpotifyIntegrationServiceImpl implements SpotifyIntegrationService 
      * @param authorizationCode Authorization code received from Spotify
      * @return JSON string containing access token
      */
-
     @Override
     public String getAccessToken(String authorizationCode) {
         try {
@@ -98,7 +96,6 @@ public class SpotifyIntegrationServiceImpl implements SpotifyIntegrationService 
      * @param refreshToken Refresh token obtained from previous authentication
      * @return JSON string with new access token
      */
-
     @Override
     public String refreshAccessToken(String refreshToken) {
         try {
@@ -121,7 +118,6 @@ public class SpotifyIntegrationServiceImpl implements SpotifyIntegrationService 
      * @param params Request parameters for token generation
      * @return JSON string containing token information
      */
-
     private String makeTokenRequest(List<BasicNameValuePair> params) throws IOException {
         String authHeader = Base64.getEncoder().encodeToString(
                 (this.clientId + ":" + this.clientSecret).getBytes(StandardCharsets.UTF_8)
@@ -149,7 +145,6 @@ public class SpotifyIntegrationServiceImpl implements SpotifyIntegrationService 
      * @param accessToken Valid access token for Spotify API
      * @return JSON string of liked songs
      */
-
     @Override
     public String getLikedSongs(String accessToken) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
