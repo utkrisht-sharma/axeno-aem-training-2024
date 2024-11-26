@@ -47,7 +47,7 @@ public class SpotifyNodeStorageServiceImpl implements SpotifyNodeStorageService 
             resolver = resourceResolverFactory.getServiceResourceResolver(authenticationParameters);
 
             // Check if root path exists
-            String rootPath = basePath + "/spotify-data";
+            String rootPath = basePath + "/spotifyData";
             Resource rootResource = resolver.getResource(rootPath);
 
             // If root doesn't exist, create it
@@ -102,14 +102,14 @@ public class SpotifyNodeStorageServiceImpl implements SpotifyNodeStorageService 
                                             Map<String, List<JsonObject>> filteredSongs) throws PersistenceException {
 
         //create filtered-songs node
-        String filteredPath = rootResource.getPath() + "/filtered-songs";
+        String filteredPath = rootResource.getPath() + "/filteredSongs";
         Resource filteredResource = resolver.getResource(filteredPath);
 
         if (filteredResource == null) {
             log.info("Filtered songs node not found. Creating new node at path: {}", filteredPath);
             Map<String, Object> properties = new HashMap<>();
             properties.put("jcr:primaryType", "nt:unstructured");
-            filteredResource = resolver.create(rootResource, "filtered-songs", properties);
+            filteredResource = resolver.create(rootResource, "filteredSongs", properties);
         }
 
         // Process each timeframe
@@ -117,7 +117,8 @@ public class SpotifyNodeStorageServiceImpl implements SpotifyNodeStorageService 
             String timeframe = entry.getKey();
             List<JsonObject> songs = entry.getValue();
 
-            String timeframePath = filteredResource.getPath() + "/" + makeValidNodeName(timeframe);
+            // Use the original timeframe name without modification
+            String timeframePath = filteredResource.getPath() + "/" + timeframe;
             Resource timeframeResource = resolver.getResource(timeframePath);
 
             // Convert songs to string for comparison
@@ -147,12 +148,11 @@ public class SpotifyNodeStorageServiceImpl implements SpotifyNodeStorageService 
                 properties.put("jcr:primaryType", "nt:unstructured");
                 properties.put("songs", newSongsData);
                 properties.put("created", Calendar.getInstance());
-                resolver.create(filteredResource, makeValidNodeName(timeframe), properties);
+                resolver.create(filteredResource, timeframe, properties);
                 log.info("Created new timeframe data: {}", timeframe);
             }
         }
     }
-
     /**
      * this method is used for storing or updating Artist songs
      *  @param resolver The resource resolver.
